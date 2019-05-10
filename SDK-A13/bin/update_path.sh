@@ -59,6 +59,33 @@ list(APPEND PB_LINK_DIRECTORIES \"${SDK_ROOT}/${TARGET_ARM}/sysroot/usr/local/li
 list(APPEND PB_INCLUDE_DIRECTORIES \"${SDK_ROOT}/${TARGET_ARM}/sysroot/usr/include\")
 " > ${CMAKE_TOOLCHAIN_FILE_ARM}
 
+TOOLCHAIN_PATH=${SDK_ROOT}
+TOOLCHAIN_PREFIX=${TARGET_ARM}
+HOSTPREFIX=$TOOLCHAIN_PATH/$TOOLCHAIN_PREFIX/sysroot/usr/qt5
+PB_SYSROOT=`realpath $TOOLCHAIN_PATH/$TOOLCHAIN_PREFIX/sysroot/`
+qtconf=$HOSTPREFIX/bin/qt.conf
+echo "generate  $qtconf"
+echo "[Paths]
+Prefix = ${PB_SYSROOT}/usr/qt5
+Headers =${PB_SYSROOT}/ebrmain/include
+Sysroot= ${PB_SYSROOT}
+Libraries = ${PB_SYSROOT}/ebrmain/lib
+SysrootifyPrefix=false
+" > $qtconf || exit 1
+
+find $PB_SYSROOT/ebrmain/lib/cmake/ -type f -iname \*.cmake | while read c
+do
+        sed -e "s+\${PB_SYSROOT}+${PB_SYSROOT}+g" -i "$c"
+done
+for lib in $PB_SYSROOT/ebrmain/lib/libQt*.so
+do
+soname="$(basename "$lib")"
+echo "set soname=$soname for $lib"
+patchelf --set-soname $soname "$(realpath "$lib")" || exit 1
+done
+
+
+
 #Update PC config
 echo "\
 
@@ -86,4 +113,28 @@ set(CMAKE_INSTALL_PREFIX \"${SDK_ROOT}/local\" CACHE PATH \"Installation Prefix\
 add_definitions(-DEMULATOR -DPLATFORM_NX)
 
 set(PB_PLATFORM \"PC\" CACHE STRING  \"ARM|PC Readonly!\") " > ${CMAKE_TOOLCHAIN_FILE_PC}
+
+TOOLCHAIN=${TOOLCHAIN_PATH}
+HOSTPREFIX=$TOOLCHAIN_PATH/local/qt5
+PB_SYSROOT=`realpath $TOOLCHAIN_PATH/`
+qtconf=$HOSTPREFIX/bin/qt.conf
+echo "generate  $qtconf"
+echo "[Paths]
+Prefix = ${PB_SYSROOT}/local/qt5
+Headers =${PB_SYSROOT}/local/qt5/include
+Sysroot= ${PB_SYSROOT}
+Libraries = ${PB_SYSROOT}/local/qt5/lib
+SysrootifyPrefix=false
+" > $qtconf || exit 1
+
+find $PB_SYSROOT/local/qt5/lib/cmake/ -type f -iname \*.cmake | while read c
+do
+        sed -e "s+\${PB_SYSROOT}+${PB_SYSROOT}+g" -i "$c"
+done
+for lib in $PB_SYSROOT/local/qt5/lib/libQt*.so
+do
+soname="$(basename "$lib")"
+echo "set soname=$soname for $lib"
+patchelf --set-soname $soname "$(realpath "$lib")" || exit 1
+done
 

@@ -1,0 +1,47 @@
+--- qtbase/mkspecs/linux-arm-gnueabi-630-clang++/qmake.conf	Sun Feb 04 14:56:12 2018 +0000
++++ qtbase/mkspecs/linux-arm-gnueabi-630-clang++/qmake.conf	Tue Feb 20 15:58:30 2018 +0000
+@@ -20,15 +20,21 @@
+ #SET (CMAKE_CXX_FLAGS "-mcpu=cortex-a8 -march=armv7-a -mfpu=neon -mfloat-abi=softfp" CACHE STRING "" FORCE)
+ 
+ 
+-QMAKE_CFLAGS_RELEASE    = -O2 -fPIC -fomit-frame-pointer -fno-strict-aliasing  -mcpu=cortex-a8 -march=armv7-a -mtune=cortex-a8 -mfpu=neon -mfloat-abi=softfp -I $${FRSCSDK_DIR}/arm-obreey-linux-gnueabi/sysroot/usr/include -I $${FRSCSDK_DIR}/arm-obreey-linux-gnueabi/sysroot/usr/local/include 
+-QMAKE_CFLAGS_DEBUG      = -O0 -fPIC -g -fno-omit-frame-pointer -mcpu=cortex-a8 -march=armv7-a -mfpu=neon -mfloat-abi=softfp -I $${FRSCSDK_DIR}/arm-obreey-linux-gnueabi/sysroot/usr/include -I $${FRSCSDK_DIR}/arm-obreey-linux-gnueabi/sysroot/usr/local/include
+-QMAKE_CFLAGS = -mcpu=cortex-a8 -march=armv7-a -mfpu=neon -mfloat-abi=softfp 
++QMAKE_CFLAGS_RELEASE    = -O2 -fno-strict-aliasing 
++# -mcpu=cortex-a8 -march=armv7-a -mtune=cortex-a8 -mfpu=neon -mfloat-abi=softfp 
++#-I $${FRSCSDK_DIR}/arm-obreey-linux-gnueabi/sysroot/usr/include -I $${FRSCSDK_DIR}/arm-obreey-linux-gnueabi/sysroot/usr/local/include 
++QMAKE_CFLAGS_DEBUG      = -O0 -g 
++#-fno-omit-frame-pointer 
++#-mcpu=cortex-a8 -march=armv7-a -mfpu=neon -mfloat-abi=softfp 
++#-I $${FRSCSDK_DIR}/arm-obreey-linux-gnueabi/sysroot/usr/include -I $${FRSCSDK_DIR}/arm-obreey-linux-gnueabi/sysroot/usr/local/include
++QMAKE_CFLAGS = -mcpu=cortex-a8 -march=armv7-a -mfpu=neon -mfloat-abi=softfp   -fPIC -fno-omit-frame-pointer 
+ QMAKE_CFLAGS_SHLIB      = -fPIC 
+ QMAKE_CFLAGS_YACC       = -Wno-unused -Wno-parentheses
+ QMAKE_CFLAGS_THREAD     = -D_REENTRANT
+ QMAKE_CFLAGS_HIDESYMS   = -fvisibility=hidden
+-QMAKE_LFLAGS += -shared -v 
++QMAKE_LFLAGS += -v 
+ QMAKE_LFLAGS_SHLIB = -shared -v
++QMAKE_LFLAGS_PLUGIN = -shared -v -v
+ 
+ QMAKE_CXXFLAGS          = $$QMAKE_CFLAGS -DQT_NO_QWS_TRANSFORMED
+ #QMAKE_CXXFLAGS_WARN_ON	= $$QMAKE_CFLAGS_WARN_ON
+@@ -47,13 +53,13 @@
+     error("FRSCSDK_DIR environment variable not set")
+ }
+ 
+-QMAKE_INCDIR            = $${FRSCSDK_DIR}/arm-obreey-linux-gnueabi-g++/sysroot/usr/local/include
+-QMAKE_INCDIR            += $${FRSCSDK_DIR}/arm-obreey-linux-gnueabi-g++/sysroot/usr/include
++#QMAKE_INCDIR            = $${FRSCSDK_DIR}/arm-obreey-linux-gnueabi-g++/sysroot/usr/local/include
++#QMAKE_INCDIR            += $${FRSCSDK_DIR}/arm-obreey-linux-gnueabi-g++/sysroot/usr/include
+ 
+-QMAKE_INCDIR            += $${FRSCSDK_DIR}/arm-obreey-linux-gnueabi-g++/sysroot/usr/include/freetype2
++#QMAKE_INCDIR            += $${FRSCSDK_DIR}/arm-obreey-linux-gnueabi-g++/sysroot/usr/include/freetype2
+ 
+-QMAKE_LIBDIR            = $${FRSCSDK_DIR}/arm-obreey-linux-gnueabi-g++/sysroot/usr/local/lib
+-QMAKE_LIBDIR            += $${FRSCSDK_DIR}/arm-obreey-linux-gnueabi-g++/sysroot/usr/lib
++#QMAKE_LIBDIR            = $${FRSCSDK_DIR}/arm-obreey-linux-gnueabi-g++/sysroot/usr/local/lib
++#QMAKE_LIBDIR            += $${FRSCSDK_DIR}/arm-obreey-linux-gnueabi-g++/sysroot/usr/lib
+ 
+ 
+ # modifications to g++.conf
