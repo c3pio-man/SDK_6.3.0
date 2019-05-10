@@ -1,0 +1,13 @@
+prefix=/srv/jenkins/workspace/qt-5.11.2-builder/SDK-A13/usr/arm-obreey-linux-gnueabi/sysroot//ebrmain
+exec_prefix=${prefix}
+libdir=/ebrmain/lib
+includedir=/ebrmain/include
+
+
+Name: Qt5 PrintSupport
+Description: Qt PrintSupport module
+Version: 5.11.2
+Libs: -L${libdir} -lQt5PrintSupport 
+Cflags: -DQT_PRINTSUPPORT_LIB -I${includedir}/QtPrintSupport -I${includedir}
+Requires: Qt5Core Qt5Gui Qt5Widgets
+

@@ -1,0 +1,13 @@
+prefix=/srv/jenkins/workspace/qt-5.11.2-builder/SDK-A13/usr/arm-obreey-linux-gnueabi/sysroot//ebrmain
+exec_prefix=${prefix}
+libdir=/ebrmain/lib
+includedir=/ebrmain/include
+
+
+Name: Qt5 WebEngine
+Description: Qt WebEngine module
+Version: 5.11.2
+Libs: -L${libdir} -lQt5WebEngine 
+Cflags: -DQT_WEBENGINE_LIB -I${includedir}/QtWebEngine -I${includedir}
+Requires: Qt5Core Qt5Gui Qt5Qml Qt5Quick Qt5WebEngineCore
+
