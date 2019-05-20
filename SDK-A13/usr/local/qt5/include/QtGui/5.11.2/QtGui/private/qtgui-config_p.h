@@ -25,7 +25,7 @@
 #define QT_FEATURE_integrityfb -1
 #define QT_FEATURE_integrityhid -1
 #define QT_FEATURE_jpeg 1
-#define QT_FEATURE_kms -1
+#define QT_FEATURE_kms 1
 #define QT_FEATURE_libinput -1
 #define QT_FEATURE_libinput_axis_api -1
 #define QT_FEATURE_linuxfb 1
@@ -41,13 +41,14 @@
 #define QT_FEATURE_tuiotouch 1
 #define QT_FEATURE_vnc 1
 #define QT_FEATURE_vsp2 -1
-#define QT_FEATURE_xcb_glx -1
+#define QT_FEATURE_xcb_glx 1
 #define QT_FEATURE_xlib 1
-#define QT_FEATURE_xcb_xlib -1
-#define QT_FEATURE_xcb_native_painting -1
+#define QT_FEATURE_xcb_xlib 1
+#define QT_FEATURE_xcb_native_painting 1
 #define QT_FEATURE_xcb_render 1
 #define QT_FEATURE_xcb_sm 1
-#define QT_FEATURE_xinput2 -1
+#define QT_FEATURE_xinput2 1
 #define QT_FEATURE_xkb 1
 #define QT_FEATURE_xkbcommon_evdev -1
 #define QT_FEATURE_xkbcommon_system -1
+#define QT_FEATURE_xrender 1

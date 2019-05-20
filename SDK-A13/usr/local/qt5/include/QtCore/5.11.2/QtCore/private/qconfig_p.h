@@ -6,7 +6,7 @@
 #define QT_FEATURE_avx2 1
 #define QT_FEATURE_private_tests -1
 #define QT_FEATURE_dbus 1
-#define QT_FEATURE_dbus_linked -1
+#define QT_FEATURE_dbus_linked 1
 #define QT_FEATURE_gui 1
 #define QT_FEATURE_libudev -1
 #define QT_FEATURE_network 1

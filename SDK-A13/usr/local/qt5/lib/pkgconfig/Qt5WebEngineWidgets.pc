@@ -1,0 +1,13 @@
+prefix=/usr/local/BUILD/pb-qt-build/SDK_6.3.0/SDK-A13/usr/local/qt5
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+
+Name: Qt5 WebEngineWidgets
+Description: Qt WebEngineWidgets module
+Version: 5.11.2
+Libs: -L${libdir} -lQt5WebEngineWidgets 
+Cflags: -DQT_WEBENGINEWIDGETS_LIB -I${includedir}/QtWebEngineWidgets -I${includedir}
+Requires: Qt5Core Qt5Gui Qt5WebEngineCore Qt5Widgets Qt5Network Qt5Quick Qt5PrintSupport
+
