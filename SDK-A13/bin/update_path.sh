@@ -133,7 +133,7 @@ do
 done
 
 echo "Unpack libQt5WebEngineCore.so"
-cat SDK-A13/usr/local/qt5/lib/libQt5WebEngineCore.so.5.11.2.gz | gunzip > SDK-A13/usr/local/qt5/lib/libQt5WebEngineCore.so.5.11.2
+cat $PB_SYSROOT/local/qt5/lib/libQt5WebEngineCore.so.5.11.2.gz | gunzip > $PB_SYSROOT/local/qt5/lib/libQt5WebEngineCore.so.5.11.2
 
 for lib in $PB_SYSROOT/local/qt5/lib/libQt*.so
 do
