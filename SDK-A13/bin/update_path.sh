@@ -131,6 +131,10 @@ find $PB_SYSROOT/local/qt5/lib/cmake/ -type f -iname \*.cmake | while read c
 do
         sed -e "s+\${PB_SYSROOT}+${PB_SYSROOT}+g" -i "$c"
 done
+
+echo "Unpack libQt5WebEngineCore.so"
+cat SDK-A13/usr/local/qt5/lib/libQt5WebEngineCore.so.5.11.2.gz | gunzip > SDK-A13/usr/local/qt5/lib/libQt5WebEngineCore.so.5.11.2
+
 for lib in $PB_SYSROOT/local/qt5/lib/libQt*.so
 do
 soname="$(basename "$lib")"
