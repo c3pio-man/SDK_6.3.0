@@ -95,6 +95,8 @@ public:
         PlaybackRequiresUserGesture,
         WebRTCPublicInterfacesOnly,
         JavascriptCanPaste,
+        DnsPrefetchEnabled,
+        PdfViewerEnabled,
     };
 
     enum FontSize {

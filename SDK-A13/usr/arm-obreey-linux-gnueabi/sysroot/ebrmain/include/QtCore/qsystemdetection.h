@@ -137,6 +137,8 @@
 #  define Q_OS_HPUX
 #elif defined(__native_client__)
 #  define Q_OS_NACL
+#elif defined(__EMSCRIPTEN__)
+#  define Q_OS_WASM
 #elif defined(__linux__) || defined(__linux)
 #  define Q_OS_LINUX
 #elif defined(__FreeBSD__) || defined(__DragonFly__) || defined(__FreeBSD_kernel__)
@@ -174,6 +176,7 @@
 #endif
 
 #if defined(Q_OS_WIN32) || defined(Q_OS_WIN64) || defined(Q_OS_WINRT)
+#  define Q_OS_WINDOWS
 #  define Q_OS_WIN
 #endif
 

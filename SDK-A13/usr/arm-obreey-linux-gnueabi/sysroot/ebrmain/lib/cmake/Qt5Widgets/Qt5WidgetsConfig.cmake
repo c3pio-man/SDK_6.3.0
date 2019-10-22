@@ -6,7 +6,7 @@ endif()
 get_filename_component(_qt5Widgets_install_prefix "${CMAKE_CURRENT_LIST_DIR}/../../../" ABSOLUTE)
 
 # For backwards compatibility only. Use Qt5Widgets_VERSION instead.
-set(Qt5Widgets_VERSION_STRING 5.11.2)
+set(Qt5Widgets_VERSION_STRING 5.12.4)
 
 set(Qt5Widgets_LIBRARIES Qt5::Widgets)
 
@@ -43,8 +43,8 @@ if (NOT TARGET Qt5::Widgets)
 
     set(_Qt5Widgets_OWN_INCLUDE_DIRS "${_qt5Widgets_install_prefix}/include/" "${_qt5Widgets_install_prefix}/include/QtWidgets")
     set(Qt5Widgets_PRIVATE_INCLUDE_DIRS
-        "${_qt5Widgets_install_prefix}/include/QtWidgets/5.11.2"
-        "${_qt5Widgets_install_prefix}/include/QtWidgets/5.11.2/QtWidgets"
+        "${_qt5Widgets_install_prefix}/include/QtWidgets/5.12.4"
+        "${_qt5Widgets_install_prefix}/include/QtWidgets/5.12.4/QtWidgets"
     )
     include("${CMAKE_CURRENT_LIST_DIR}/ExtraSourceIncludes.cmake" OPTIONAL)
 
@@ -88,7 +88,7 @@ if (NOT TARGET Qt5::Widgets)
     foreach(_module_dep ${_Qt5Widgets_MODULE_DEPENDENCIES})
         if (NOT Qt5${_module_dep}_FOUND)
             find_package(Qt5${_module_dep}
-                5.11.2 ${_Qt5Widgets_FIND_VERSION_EXACT}
+                5.12.4 ${_Qt5Widgets_FIND_VERSION_EXACT}
                 ${_Qt5Widgets_DEPENDENCIES_FIND_QUIET}
                 ${_Qt5Widgets_FIND_DEPENDENCIES_REQUIRED}
                 PATHS "${CMAKE_CURRENT_LIST_DIR}/.." NO_DEFAULT_PATH
@@ -122,6 +122,9 @@ if (NOT TARGET Qt5::Widgets)
     set_property(TARGET Qt5::Widgets PROPERTY
       INTERFACE_COMPILE_DEFINITIONS QT_WIDGETS_LIB)
 
+    set_property(TARGET Qt5::Widgets PROPERTY INTERFACE_QT_ENABLED_FEATURES abstractbutton;abstractslider;groupbox;buttongroup;label;pushbutton;menu;lineedit;spinbox;slider;scrollbar;scrollarea;itemviews;tableview;toolbutton;calendarwidget;checkbox;dialog;dialogbuttonbox;colordialog;listview;columnview;combobox;commandlinkbutton;completer;contextmenu;datawidgetmapper;datetimeedit;dial;filesystemmodel;dirmodel;resizehandler;mainwindow;dockwidget;textedit;errormessage;splitter;stackedwidget;treeview;filedialog;fontcombobox;fontdialog;formlayout;fscompleter;graphicsview;graphicseffect;inputdialog;keysequenceedit;lcdnumber;listwidget;mdiarea;menubar;messagebox;paint_debug;progressbar;progressdialog;radiobutton;rubberband;scroller;sizegrip;splashscreen;statusbar;statustip;style-stylesheet;syntaxhighlighter;tabbar;tablewidget;tabwidget;textbrowser;toolbar;toolbox;tooltip;treewidget;undocommand;undostack;undogroup;undoview;wizard)
+    set_property(TARGET Qt5::Widgets PROPERTY INTERFACE_QT_DISABLED_FEATURES )
+
     set(_Qt5Widgets_PRIVATE_DIRS_EXIST TRUE)
     foreach (_Qt5Widgets_PRIVATE_DIR ${Qt5Widgets_OWN_PRIVATE_INCLUDE_DIRS})
         if (NOT EXISTS ${_Qt5Widgets_PRIVATE_DIR})
@@ -145,7 +148,7 @@ if (NOT TARGET Qt5::Widgets)
         )
     endif()
 
-    _populate_Widgets_target_properties(RELEASE "libQt5Widgets.so.5.11.2" "" )
+    _populate_Widgets_target_properties(RELEASE "libQt5Widgets.so.5.12.4" "" )
 
 
 

@@ -1,4 +1,4 @@
-prefix=/srv/jenkins/workspace/qt-5.11.2-builder/SDK-A13/usr/arm-obreey-linux-gnueabi/sysroot//ebrmain
+prefix=/srv/jenkins/workspace/qt-5.12.4-builder/SDK-B288/usr/arm-obreey-linux-gnueabi/sysroot//ebrmain
 exec_prefix=${prefix}
 libdir=/ebrmain/lib
 includedir=/ebrmain/include
@@ -6,7 +6,7 @@ includedir=/ebrmain/include
 
 Name: Qt5 Xml
 Description: Qt Xml module
-Version: 5.11.2
+Version: 5.12.4
 Libs: -L${libdir} -lQt5Xml 
 Cflags: -DQT_XML_LIB -I${includedir}/QtXml -I${includedir}
 Requires: Qt5Core

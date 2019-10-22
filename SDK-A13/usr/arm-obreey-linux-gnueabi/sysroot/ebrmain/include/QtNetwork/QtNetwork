@@ -8,6 +8,9 @@
 #if QT_CONFIG(dnslookup)
 #include "qdnslookup.h"
 #endif
+#if QT_CONFIG(dtls)
+#include "qdtls.h"
+#endif
 #include "qhostaddress.h"
 #include "qhostinfo.h"
 #include "qhstspolicy.h"
@@ -34,6 +37,7 @@
 #include "qnetworkreply.h"
 #include "qnetworkrequest.h"
 #include "qnetworksession.h"
+#include "qpassworddigestor.h"
 #include "qsctpserver.h"
 #include "qsctpsocket.h"
 #include "qssl.h"
@@ -45,7 +49,9 @@
 #include "qsslellipticcurve.h"
 #include "qsslerror.h"
 #include "qsslkey.h"
+#if QT_CONFIG(ssl)
 #include "qsslpresharedkeyauthenticator.h"
+#endif
 #include "qsslsocket.h"
 #include "qtcpserver.h"
 #include "qtcpsocket.h"

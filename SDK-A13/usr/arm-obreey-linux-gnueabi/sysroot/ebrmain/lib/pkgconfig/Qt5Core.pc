@@ -1,14 +1,14 @@
-prefix=/srv/jenkins/workspace/qt-5.11.2-builder/SDK-A13/usr/arm-obreey-linux-gnueabi/sysroot//ebrmain
+prefix=/srv/jenkins/workspace/qt-5.12.4-builder/SDK-B288/usr/arm-obreey-linux-gnueabi/sysroot//ebrmain
 exec_prefix=${prefix}
 libdir=/ebrmain/lib
 includedir=/ebrmain/include
 
-host_bins=/srv/jenkins/workspace/qt-5.11.2-builder/SDK-A13/usr/arm-obreey-linux-gnueabi/sysroot/usr/qt5/bin
-qt_config=shared release c++11 c++14 concurrent dbus reduce_exports release_tools stl properties animation textcodec big_codecs clock-monotonic codecs textdate datestring doubleconversion eventfd filesystemiterator filesystemwatcher gestures glib itemmodel proxymodel identityproxymodel inotify library mimetype process statemachine regularexpression settings sharedmemory sortfilterproxymodel stringlistmodel systemsemaphore temporaryfile threadsafe-cloexec translation xmlstream xmlstreamreader xmlstreamwriter
+host_bins=/srv/jenkins/workspace/qt-5.12.4-builder/SDK-B288/usr/arm-obreey-linux-gnueabi/sysroot/usr/qt5/bin
+qt_config=shared rpath release c++11 c++14 concurrent dbus reduce_exports release_tools stl properties animation textcodec big_codecs clock-monotonic codecs textdate datestring doubleconversion eventfd filesystemiterator filesystemwatcher gestures glib itemmodel proxymodel identityproxymodel inotify library mimetype process statemachine regularexpression settings sharedmemory sortfilterproxymodel stringlistmodel systemsemaphore temporaryfile threadsafe-cloexec translation xmlstream xmlstreamreader xmlstreamwriter
 
 Name: Qt5 Core
 Description: Qt Core module
-Version: 5.11.2
+Version: 5.12.4
 Libs: -L${libdir} -lQt5Core 
 Cflags: -DQT_CORE_LIB -I${includedir}/QtCore -I${includedir}
 

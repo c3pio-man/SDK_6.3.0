@@ -50,14 +50,14 @@
 #include <functional>
 
 namespace QtWebEngineCore {
-class BrowserContextAdapter;
+class ProfileAdapter;
 class CookieMonsterDelegateQt;
-}
+} // namespace QtWebEngineCore
 
 QT_BEGIN_NAMESPACE
 
 class QWebEngineCookieStorePrivate;
-class QWEBENGINE_EXPORT QWebEngineCookieStore : public QObject {
+class Q_WEBENGINECORE_EXPORT QWebEngineCookieStore : public QObject {
     Q_OBJECT
 
 public:
@@ -84,7 +84,7 @@ Q_SIGNALS:
 
 private:
     explicit QWebEngineCookieStore(QObject *parent = Q_NULLPTR);
-    friend class QtWebEngineCore::BrowserContextAdapter;
+    friend class QtWebEngineCore::ProfileAdapter;
     friend class QtWebEngineCore::CookieMonsterDelegateQt;
     Q_DISABLE_COPY(QWebEngineCookieStore)
     Q_DECLARE_PRIVATE(QWebEngineCookieStore)
@@ -93,6 +93,6 @@ private:
 
 QT_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QWebEngineCookieStore*)
+Q_DECLARE_METATYPE(QWebEngineCookieStore *)
 
 #endif // QWEBENGINECOOKIESTORE_H

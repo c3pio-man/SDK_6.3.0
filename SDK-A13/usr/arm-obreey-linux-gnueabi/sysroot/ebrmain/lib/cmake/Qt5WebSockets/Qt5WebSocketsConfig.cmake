@@ -6,7 +6,7 @@ endif()
 get_filename_component(_qt5WebSockets_install_prefix "${CMAKE_CURRENT_LIST_DIR}/../../../" ABSOLUTE)
 
 # For backwards compatibility only. Use Qt5WebSockets_VERSION instead.
-set(Qt5WebSockets_VERSION_STRING 5.11.2)
+set(Qt5WebSockets_VERSION_STRING 5.12.4)
 
 set(Qt5WebSockets_LIBRARIES Qt5::WebSockets)
 
@@ -43,8 +43,8 @@ if (NOT TARGET Qt5::WebSockets)
 
     set(_Qt5WebSockets_OWN_INCLUDE_DIRS "${_qt5WebSockets_install_prefix}/include/" "${_qt5WebSockets_install_prefix}/include/QtWebSockets")
     set(Qt5WebSockets_PRIVATE_INCLUDE_DIRS
-        "${_qt5WebSockets_install_prefix}/include/QtWebSockets/5.11.2"
-        "${_qt5WebSockets_install_prefix}/include/QtWebSockets/5.11.2/QtWebSockets"
+        "${_qt5WebSockets_install_prefix}/include/QtWebSockets/5.12.4"
+        "${_qt5WebSockets_install_prefix}/include/QtWebSockets/5.12.4/QtWebSockets"
     )
     include("${CMAKE_CURRENT_LIST_DIR}/ExtraSourceIncludes.cmake" OPTIONAL)
 
@@ -88,7 +88,7 @@ if (NOT TARGET Qt5::WebSockets)
     foreach(_module_dep ${_Qt5WebSockets_MODULE_DEPENDENCIES})
         if (NOT Qt5${_module_dep}_FOUND)
             find_package(Qt5${_module_dep}
-                5.11.2 ${_Qt5WebSockets_FIND_VERSION_EXACT}
+                5.12.4 ${_Qt5WebSockets_FIND_VERSION_EXACT}
                 ${_Qt5WebSockets_DEPENDENCIES_FIND_QUIET}
                 ${_Qt5WebSockets_FIND_DEPENDENCIES_REQUIRED}
                 PATHS "${CMAKE_CURRENT_LIST_DIR}/.." NO_DEFAULT_PATH
@@ -122,6 +122,9 @@ if (NOT TARGET Qt5::WebSockets)
     set_property(TARGET Qt5::WebSockets PROPERTY
       INTERFACE_COMPILE_DEFINITIONS QT_WEBSOCKETS_LIB)
 
+    set_property(TARGET Qt5::WebSockets PROPERTY INTERFACE_QT_ENABLED_FEATURES )
+    set_property(TARGET Qt5::WebSockets PROPERTY INTERFACE_QT_DISABLED_FEATURES )
+
     set(_Qt5WebSockets_PRIVATE_DIRS_EXIST TRUE)
     foreach (_Qt5WebSockets_PRIVATE_DIR ${Qt5WebSockets_OWN_PRIVATE_INCLUDE_DIRS})
         if (NOT EXISTS ${_Qt5WebSockets_PRIVATE_DIR})
@@ -145,7 +148,7 @@ if (NOT TARGET Qt5::WebSockets)
         )
     endif()
 
-    _populate_WebSockets_target_properties(RELEASE "libQt5WebSockets.so.5.11.2" "" )
+    _populate_WebSockets_target_properties(RELEASE "libQt5WebSockets.so.5.12.4" "" )
 
 
 

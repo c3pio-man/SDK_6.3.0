@@ -95,6 +95,7 @@ public:
     };
 
     Q_DECLARE_FLAGS(CreateTextureOptions, CreateTextureOption)
+    Q_FLAG(CreateTextureOptions)
 
     enum SceneGraphError {
         ContextNotAvailable = 1
@@ -240,6 +241,7 @@ private:
     friend class QQuickWidget;
     friend class QQuickRenderControl;
     friend class QQuickAnimatorController;
+    friend class QQuickWidgetPrivate;
     Q_DISABLE_COPY(QQuickWindow)
 };
 

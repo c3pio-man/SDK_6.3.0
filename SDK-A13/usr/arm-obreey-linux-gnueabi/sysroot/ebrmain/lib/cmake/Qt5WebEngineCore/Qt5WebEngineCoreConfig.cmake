@@ -6,7 +6,7 @@ endif()
 get_filename_component(_qt5WebEngineCore_install_prefix "${CMAKE_CURRENT_LIST_DIR}/../../../" ABSOLUTE)
 
 # For backwards compatibility only. Use Qt5WebEngineCore_VERSION instead.
-set(Qt5WebEngineCore_VERSION_STRING 5.11.2)
+set(Qt5WebEngineCore_VERSION_STRING 5.13.0)
 
 set(Qt5WebEngineCore_LIBRARIES Qt5::WebEngineCore)
 
@@ -43,8 +43,8 @@ if (NOT TARGET Qt5::WebEngineCore)
 
     set(_Qt5WebEngineCore_OWN_INCLUDE_DIRS "${_qt5WebEngineCore_install_prefix}/include/" "${_qt5WebEngineCore_install_prefix}/include/QtWebEngineCore")
     set(Qt5WebEngineCore_PRIVATE_INCLUDE_DIRS
-        "${_qt5WebEngineCore_install_prefix}/include/QtWebEngineCore/5.11.2"
-        "${_qt5WebEngineCore_install_prefix}/include/QtWebEngineCore/5.11.2/QtWebEngineCore"
+        "${_qt5WebEngineCore_install_prefix}/include/QtWebEngineCore/5.13.0"
+        "${_qt5WebEngineCore_install_prefix}/include/QtWebEngineCore/5.13.0/QtWebEngineCore"
     )
     include("${CMAKE_CURRENT_LIST_DIR}/ExtraSourceIncludes.cmake" OPTIONAL)
 
@@ -88,7 +88,7 @@ if (NOT TARGET Qt5::WebEngineCore)
     foreach(_module_dep ${_Qt5WebEngineCore_MODULE_DEPENDENCIES})
         if (NOT Qt5${_module_dep}_FOUND)
             find_package(Qt5${_module_dep}
-                5.11.2 ${_Qt5WebEngineCore_FIND_VERSION_EXACT}
+                5.13.0 ${_Qt5WebEngineCore_FIND_VERSION_EXACT}
                 ${_Qt5WebEngineCore_DEPENDENCIES_FIND_QUIET}
                 ${_Qt5WebEngineCore_FIND_DEPENDENCIES_REQUIRED}
                 PATHS "${CMAKE_CURRENT_LIST_DIR}/.." NO_DEFAULT_PATH
@@ -122,6 +122,9 @@ if (NOT TARGET Qt5::WebEngineCore)
     set_property(TARGET Qt5::WebEngineCore PROPERTY
       INTERFACE_COMPILE_DEFINITIONS QT_WEBENGINECORE_LIB)
 
+    set_property(TARGET Qt5::WebEngineCore PROPERTY INTERFACE_QT_ENABLED_FEATURES webengine-spellchecker;webengine-webchannel)
+    set_property(TARGET Qt5::WebEngineCore PROPERTY INTERFACE_QT_DISABLED_FEATURES webengine-extensions;webengine-geolocation;webengine-native-spellchecker)
+
     set(_Qt5WebEngineCore_PRIVATE_DIRS_EXIST TRUE)
     foreach (_Qt5WebEngineCore_PRIVATE_DIR ${Qt5WebEngineCore_OWN_PRIVATE_INCLUDE_DIRS})
         if (NOT EXISTS ${_Qt5WebEngineCore_PRIVATE_DIR})
@@ -145,7 +148,7 @@ if (NOT TARGET Qt5::WebEngineCore)
         )
     endif()
 
-    _populate_WebEngineCore_target_properties(RELEASE "libQt5WebEngineCore.so.5.11.2" "" )
+    _populate_WebEngineCore_target_properties(RELEASE "libQt5WebEngineCore.so.5.13.0" "" )
 
 
 

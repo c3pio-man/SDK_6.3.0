@@ -6,7 +6,7 @@ endif()
 get_filename_component(_qt5Xml_install_prefix "${CMAKE_CURRENT_LIST_DIR}/../../../" ABSOLUTE)
 
 # For backwards compatibility only. Use Qt5Xml_VERSION instead.
-set(Qt5Xml_VERSION_STRING 5.11.2)
+set(Qt5Xml_VERSION_STRING 5.12.4)
 
 set(Qt5Xml_LIBRARIES Qt5::Xml)
 
@@ -43,8 +43,8 @@ if (NOT TARGET Qt5::Xml)
 
     set(_Qt5Xml_OWN_INCLUDE_DIRS "${_qt5Xml_install_prefix}/include/" "${_qt5Xml_install_prefix}/include/QtXml")
     set(Qt5Xml_PRIVATE_INCLUDE_DIRS
-        "${_qt5Xml_install_prefix}/include/QtXml/5.11.2"
-        "${_qt5Xml_install_prefix}/include/QtXml/5.11.2/QtXml"
+        "${_qt5Xml_install_prefix}/include/QtXml/5.12.4"
+        "${_qt5Xml_install_prefix}/include/QtXml/5.12.4/QtXml"
     )
     include("${CMAKE_CURRENT_LIST_DIR}/ExtraSourceIncludes.cmake" OPTIONAL)
 
@@ -88,7 +88,7 @@ if (NOT TARGET Qt5::Xml)
     foreach(_module_dep ${_Qt5Xml_MODULE_DEPENDENCIES})
         if (NOT Qt5${_module_dep}_FOUND)
             find_package(Qt5${_module_dep}
-                5.11.2 ${_Qt5Xml_FIND_VERSION_EXACT}
+                5.12.4 ${_Qt5Xml_FIND_VERSION_EXACT}
                 ${_Qt5Xml_DEPENDENCIES_FIND_QUIET}
                 ${_Qt5Xml_FIND_DEPENDENCIES_REQUIRED}
                 PATHS "${CMAKE_CURRENT_LIST_DIR}/.." NO_DEFAULT_PATH
@@ -122,6 +122,9 @@ if (NOT TARGET Qt5::Xml)
     set_property(TARGET Qt5::Xml PROPERTY
       INTERFACE_COMPILE_DEFINITIONS QT_XML_LIB)
 
+    set_property(TARGET Qt5::Xml PROPERTY INTERFACE_QT_ENABLED_FEATURES dom)
+    set_property(TARGET Qt5::Xml PROPERTY INTERFACE_QT_DISABLED_FEATURES )
+
     set(_Qt5Xml_PRIVATE_DIRS_EXIST TRUE)
     foreach (_Qt5Xml_PRIVATE_DIR ${Qt5Xml_OWN_PRIVATE_INCLUDE_DIRS})
         if (NOT EXISTS ${_Qt5Xml_PRIVATE_DIR})
@@ -145,7 +148,7 @@ if (NOT TARGET Qt5::Xml)
         )
     endif()
 
-    _populate_Xml_target_properties(RELEASE "libQt5Xml.so.5.11.2" "" )
+    _populate_Xml_target_properties(RELEASE "libQt5Xml.so.5.12.4" "" )
 
 
 

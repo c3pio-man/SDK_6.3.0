@@ -496,6 +496,38 @@ int qmlRegisterCustomType(const char *uri, int versionMajor, int versionMinor,
     return QQmlPrivate::qmlregister(QQmlPrivate::TypeRegistration, &type);
 }
 
+template<typename T, int metaObjectRevision>
+int qmlRegisterCustomType(const char *uri, int versionMajor, int versionMinor,
+                          const char *qmlName, QQmlCustomParser *parser)
+{
+    QML_GETTYPENAMES
+
+    QQmlPrivate::RegisterType type = {
+        1,
+
+        qRegisterNormalizedMetaType<T *>(pointerName.constData()),
+        qRegisterNormalizedMetaType<QQmlListProperty<T> >(listName.constData()),
+        sizeof(T), QQmlPrivate::createInto<T>,
+        QString(),
+
+        uri, versionMajor, versionMinor, qmlName, &T::staticMetaObject,
+
+        QQmlPrivate::attachedPropertiesFunc<T>(),
+        QQmlPrivate::attachedPropertiesMetaObject<T>(),
+
+        QQmlPrivate::StaticCastSelector<T,QQmlParserStatus>::cast(),
+        QQmlPrivate::StaticCastSelector<T,QQmlPropertyValueSource>::cast(),
+        QQmlPrivate::StaticCastSelector<T,QQmlPropertyValueInterceptor>::cast(),
+
+        nullptr, nullptr,
+
+        parser,
+        metaObjectRevision
+    };
+
+    return QQmlPrivate::qmlregister(QQmlPrivate::TypeRegistration, &type);
+}
+
 template<typename T, typename E>
 int qmlRegisterCustomExtendedType(const char *uri, int versionMajor, int versionMinor,
                           const char *qmlName, QQmlCustomParser *parser)
@@ -550,6 +582,10 @@ namespace QtQml {
     Q_QML_EXPORT QObject *qmlAttachedPropertiesObjectById(int, const QObject *, bool create = true);
     Q_QML_EXPORT QObject *qmlAttachedPropertiesObject(int *, const QObject *,
                                                       const QMetaObject *, bool create);
+    Q_QML_EXPORT QQmlAttachedPropertiesFunc qmlAttachedPropertiesFunction(QObject *,
+                                                                          const QMetaObject *);
+    Q_QML_EXPORT QObject *qmlAttachedPropertiesObject(QObject *, QQmlAttachedPropertiesFunc func,
+                                                      bool create = true);
 #ifndef Q_QDOC
 }
 #endif
@@ -569,8 +605,12 @@ Q_QML_EXPORT void qmlRegisterModule(const char *uri, int versionMajor, int versi
 template<typename T>
 QObject *qmlAttachedPropertiesObject(const QObject *obj, bool create = true)
 {
-    static int idx = -1;
-    return qmlAttachedPropertiesObject(&idx, obj, &T::staticMetaObject, create);
+    // We don't need a concrete object to resolve the function. As T is a C++ type, it and all its
+    // super types should be registered as CppType (or not at all). We only need the object and its
+    // QML engine to resolve composite types. Therefore, the function is actually a static property
+    // of the C++ type system and we can cache it here for improved performance on further lookups.
+    static const auto func = qmlAttachedPropertiesFunction(nullptr, &T::staticMetaObject);
+    return qmlAttachedPropertiesObject(const_cast<QObject *>(obj), func, create);
 }
 
 Q_QML_EXPORT void qmlRegisterBaseTypes(const char *uri, int versionMajor, int versionMinor);
@@ -644,6 +684,8 @@ inline int qmlRegisterType(const QUrl &url, const char *uri, int versionMajor, i
 
     return QQmlPrivate::qmlregister(QQmlPrivate::CompositeRegistration, &type);
 }
+
+int Q_QML_EXPORT qmlTypeId(const char *uri, int versionMajor, int versionMinor, const char *qmlName);
 
 QT_END_NAMESPACE
 

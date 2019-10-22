@@ -6,7 +6,7 @@ endif()
 get_filename_component(_qt5Concurrent_install_prefix "${CMAKE_CURRENT_LIST_DIR}/../../../" ABSOLUTE)
 
 # For backwards compatibility only. Use Qt5Concurrent_VERSION instead.
-set(Qt5Concurrent_VERSION_STRING 5.11.2)
+set(Qt5Concurrent_VERSION_STRING 5.12.4)
 
 set(Qt5Concurrent_LIBRARIES Qt5::Concurrent)
 
@@ -85,7 +85,7 @@ if (NOT TARGET Qt5::Concurrent)
     foreach(_module_dep ${_Qt5Concurrent_MODULE_DEPENDENCIES})
         if (NOT Qt5${_module_dep}_FOUND)
             find_package(Qt5${_module_dep}
-                5.11.2 ${_Qt5Concurrent_FIND_VERSION_EXACT}
+                5.12.4 ${_Qt5Concurrent_FIND_VERSION_EXACT}
                 ${_Qt5Concurrent_DEPENDENCIES_FIND_QUIET}
                 ${_Qt5Concurrent_FIND_DEPENDENCIES_REQUIRED}
                 PATHS "${CMAKE_CURRENT_LIST_DIR}/.." NO_DEFAULT_PATH
@@ -119,6 +119,9 @@ if (NOT TARGET Qt5::Concurrent)
     set_property(TARGET Qt5::Concurrent PROPERTY
       INTERFACE_COMPILE_DEFINITIONS QT_CONCURRENT_LIB)
 
+    set_property(TARGET Qt5::Concurrent PROPERTY INTERFACE_QT_ENABLED_FEATURES )
+    set_property(TARGET Qt5::Concurrent PROPERTY INTERFACE_QT_DISABLED_FEATURES )
+
     set(_Qt5Concurrent_PRIVATE_DIRS_EXIST TRUE)
     foreach (_Qt5Concurrent_PRIVATE_DIR ${Qt5Concurrent_OWN_PRIVATE_INCLUDE_DIRS})
         if (NOT EXISTS ${_Qt5Concurrent_PRIVATE_DIR})
@@ -142,7 +145,7 @@ if (NOT TARGET Qt5::Concurrent)
         )
     endif()
 
-    _populate_Concurrent_target_properties(RELEASE "libQt5Concurrent.so.5.11.2" "" )
+    _populate_Concurrent_target_properties(RELEASE "libQt5Concurrent.so.5.12.4" "" )
 
 
 

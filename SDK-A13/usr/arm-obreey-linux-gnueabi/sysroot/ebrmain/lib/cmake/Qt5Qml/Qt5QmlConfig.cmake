@@ -6,7 +6,7 @@ endif()
 get_filename_component(_qt5Qml_install_prefix "${CMAKE_CURRENT_LIST_DIR}/../../../" ABSOLUTE)
 
 # For backwards compatibility only. Use Qt5Qml_VERSION instead.
-set(Qt5Qml_VERSION_STRING 5.11.2)
+set(Qt5Qml_VERSION_STRING 5.12.4)
 
 set(Qt5Qml_LIBRARIES Qt5::Qml)
 
@@ -43,8 +43,8 @@ if (NOT TARGET Qt5::Qml)
 
     set(_Qt5Qml_OWN_INCLUDE_DIRS "${_qt5Qml_install_prefix}/include/" "${_qt5Qml_install_prefix}/include/QtQml")
     set(Qt5Qml_PRIVATE_INCLUDE_DIRS
-        "${_qt5Qml_install_prefix}/include/QtQml/5.11.2"
-        "${_qt5Qml_install_prefix}/include/QtQml/5.11.2/QtQml"
+        "${_qt5Qml_install_prefix}/include/QtQml/5.12.4"
+        "${_qt5Qml_install_prefix}/include/QtQml/5.12.4/QtQml"
     )
     include("${CMAKE_CURRENT_LIST_DIR}/ExtraSourceIncludes.cmake" OPTIONAL)
 
@@ -88,7 +88,7 @@ if (NOT TARGET Qt5::Qml)
     foreach(_module_dep ${_Qt5Qml_MODULE_DEPENDENCIES})
         if (NOT Qt5${_module_dep}_FOUND)
             find_package(Qt5${_module_dep}
-                5.11.2 ${_Qt5Qml_FIND_VERSION_EXACT}
+                5.12.4 ${_Qt5Qml_FIND_VERSION_EXACT}
                 ${_Qt5Qml_DEPENDENCIES_FIND_QUIET}
                 ${_Qt5Qml_FIND_DEPENDENCIES_REQUIRED}
                 PATHS "${CMAKE_CURRENT_LIST_DIR}/.." NO_DEFAULT_PATH
@@ -122,6 +122,9 @@ if (NOT TARGET Qt5::Qml)
     set_property(TARGET Qt5::Qml PROPERTY
       INTERFACE_COMPILE_DEFINITIONS QT_QML_LIB)
 
+    set_property(TARGET Qt5::Qml PROPERTY INTERFACE_QT_ENABLED_FEATURES qml-debug;qml-network)
+    set_property(TARGET Qt5::Qml PROPERTY INTERFACE_QT_DISABLED_FEATURES )
+
     set(_Qt5Qml_PRIVATE_DIRS_EXIST TRUE)
     foreach (_Qt5Qml_PRIVATE_DIR ${Qt5Qml_OWN_PRIVATE_INCLUDE_DIRS})
         if (NOT EXISTS ${_Qt5Qml_PRIVATE_DIR})
@@ -145,7 +148,7 @@ if (NOT TARGET Qt5::Qml)
         )
     endif()
 
-    _populate_Qml_target_properties(RELEASE "libQt5Qml.so.5.11.2" "" )
+    _populate_Qml_target_properties(RELEASE "libQt5Qml.so.5.12.4" "" )
 
 
 

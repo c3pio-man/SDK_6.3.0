@@ -6,7 +6,7 @@ endif()
 get_filename_component(_qt5WebEngine_install_prefix "${CMAKE_CURRENT_LIST_DIR}/../../../" ABSOLUTE)
 
 # For backwards compatibility only. Use Qt5WebEngine_VERSION instead.
-set(Qt5WebEngine_VERSION_STRING 5.11.2)
+set(Qt5WebEngine_VERSION_STRING 5.13.0)
 
 set(Qt5WebEngine_LIBRARIES Qt5::WebEngine)
 
@@ -43,8 +43,8 @@ if (NOT TARGET Qt5::WebEngine)
 
     set(_Qt5WebEngine_OWN_INCLUDE_DIRS "${_qt5WebEngine_install_prefix}/include/" "${_qt5WebEngine_install_prefix}/include/QtWebEngine")
     set(Qt5WebEngine_PRIVATE_INCLUDE_DIRS
-        "${_qt5WebEngine_install_prefix}/include/QtWebEngine/5.11.2"
-        "${_qt5WebEngine_install_prefix}/include/QtWebEngine/5.11.2/QtWebEngine"
+        "${_qt5WebEngine_install_prefix}/include/QtWebEngine/5.13.0"
+        "${_qt5WebEngine_install_prefix}/include/QtWebEngine/5.13.0/QtWebEngine"
     )
     include("${CMAKE_CURRENT_LIST_DIR}/ExtraSourceIncludes.cmake" OPTIONAL)
 
@@ -88,7 +88,7 @@ if (NOT TARGET Qt5::WebEngine)
     foreach(_module_dep ${_Qt5WebEngine_MODULE_DEPENDENCIES})
         if (NOT Qt5${_module_dep}_FOUND)
             find_package(Qt5${_module_dep}
-                5.11.2 ${_Qt5WebEngine_FIND_VERSION_EXACT}
+                5.13.0 ${_Qt5WebEngine_FIND_VERSION_EXACT}
                 ${_Qt5WebEngine_DEPENDENCIES_FIND_QUIET}
                 ${_Qt5WebEngine_FIND_DEPENDENCIES_REQUIRED}
                 PATHS "${CMAKE_CURRENT_LIST_DIR}/.." NO_DEFAULT_PATH
@@ -122,6 +122,9 @@ if (NOT TARGET Qt5::WebEngine)
     set_property(TARGET Qt5::WebEngine PROPERTY
       INTERFACE_COMPILE_DEFINITIONS QT_WEBENGINE_LIB)
 
+    set_property(TARGET Qt5::WebEngine PROPERTY INTERFACE_QT_ENABLED_FEATURES )
+    set_property(TARGET Qt5::WebEngine PROPERTY INTERFACE_QT_DISABLED_FEATURES )
+
     set(_Qt5WebEngine_PRIVATE_DIRS_EXIST TRUE)
     foreach (_Qt5WebEngine_PRIVATE_DIR ${Qt5WebEngine_OWN_PRIVATE_INCLUDE_DIRS})
         if (NOT EXISTS ${_Qt5WebEngine_PRIVATE_DIR})
@@ -145,7 +148,7 @@ if (NOT TARGET Qt5::WebEngine)
         )
     endif()
 
-    _populate_WebEngine_target_properties(RELEASE "libQt5WebEngine.so.5.11.2" "" )
+    _populate_WebEngine_target_properties(RELEASE "libQt5WebEngine.so.5.13.0" "" )
 
 
 

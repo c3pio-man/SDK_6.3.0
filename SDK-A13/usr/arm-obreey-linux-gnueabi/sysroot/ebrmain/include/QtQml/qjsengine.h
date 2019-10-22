@@ -69,6 +69,8 @@ public:
 
     QJSValue evaluate(const QString &program, const QString &fileName = QString(), int lineNumber = 1);
 
+    QJSValue importModule(const QString &fileName);
+
     QJSValue newObject();
     QJSValue newArray(uint length = 0);
 
@@ -81,6 +83,8 @@ public:
     {
         return newQMetaObject(&T::staticMetaObject);
     }
+
+    QJSValue newErrorObject(QJSValue::ErrorType errorType, const QString &message = QString());
 
     template <typename T>
     inline QJSValue toScriptValue(const T &value)
@@ -110,6 +114,9 @@ public:
     void installExtensions(Extensions extensions, const QJSValue &object = QJSValue());
 
     QV4::ExecutionEngine *handle() const { return m_v4Engine; }
+
+    void throwError(const QString &message);
+    void throwError(QJSValue::ErrorType errorType, const QString &message = QString());
 
 private:
     QJSValue create(int type, const void *ptr);

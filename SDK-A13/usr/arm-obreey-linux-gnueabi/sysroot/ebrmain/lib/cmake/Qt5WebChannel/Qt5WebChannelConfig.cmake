@@ -6,7 +6,7 @@ endif()
 get_filename_component(_qt5WebChannel_install_prefix "${CMAKE_CURRENT_LIST_DIR}/../../../" ABSOLUTE)
 
 # For backwards compatibility only. Use Qt5WebChannel_VERSION instead.
-set(Qt5WebChannel_VERSION_STRING 5.11.2)
+set(Qt5WebChannel_VERSION_STRING 5.12.4)
 
 set(Qt5WebChannel_LIBRARIES Qt5::WebChannel)
 
@@ -43,8 +43,8 @@ if (NOT TARGET Qt5::WebChannel)
 
     set(_Qt5WebChannel_OWN_INCLUDE_DIRS "${_qt5WebChannel_install_prefix}/include/" "${_qt5WebChannel_install_prefix}/include/QtWebChannel")
     set(Qt5WebChannel_PRIVATE_INCLUDE_DIRS
-        "${_qt5WebChannel_install_prefix}/include/QtWebChannel/5.11.2"
-        "${_qt5WebChannel_install_prefix}/include/QtWebChannel/5.11.2/QtWebChannel"
+        "${_qt5WebChannel_install_prefix}/include/QtWebChannel/5.12.4"
+        "${_qt5WebChannel_install_prefix}/include/QtWebChannel/5.12.4/QtWebChannel"
     )
     include("${CMAKE_CURRENT_LIST_DIR}/ExtraSourceIncludes.cmake" OPTIONAL)
 
@@ -88,7 +88,7 @@ if (NOT TARGET Qt5::WebChannel)
     foreach(_module_dep ${_Qt5WebChannel_MODULE_DEPENDENCIES})
         if (NOT Qt5${_module_dep}_FOUND)
             find_package(Qt5${_module_dep}
-                5.11.2 ${_Qt5WebChannel_FIND_VERSION_EXACT}
+                5.12.4 ${_Qt5WebChannel_FIND_VERSION_EXACT}
                 ${_Qt5WebChannel_DEPENDENCIES_FIND_QUIET}
                 ${_Qt5WebChannel_FIND_DEPENDENCIES_REQUIRED}
                 PATHS "${CMAKE_CURRENT_LIST_DIR}/.." NO_DEFAULT_PATH
@@ -122,6 +122,9 @@ if (NOT TARGET Qt5::WebChannel)
     set_property(TARGET Qt5::WebChannel PROPERTY
       INTERFACE_COMPILE_DEFINITIONS QT_WEBCHANNEL_LIB)
 
+    set_property(TARGET Qt5::WebChannel PROPERTY INTERFACE_QT_ENABLED_FEATURES )
+    set_property(TARGET Qt5::WebChannel PROPERTY INTERFACE_QT_DISABLED_FEATURES )
+
     set(_Qt5WebChannel_PRIVATE_DIRS_EXIST TRUE)
     foreach (_Qt5WebChannel_PRIVATE_DIR ${Qt5WebChannel_OWN_PRIVATE_INCLUDE_DIRS})
         if (NOT EXISTS ${_Qt5WebChannel_PRIVATE_DIR})
@@ -145,7 +148,7 @@ if (NOT TARGET Qt5::WebChannel)
         )
     endif()
 
-    _populate_WebChannel_target_properties(RELEASE "libQt5WebChannel.so.5.11.2" "" )
+    _populate_WebChannel_target_properties(RELEASE "libQt5WebChannel.so.5.12.4" "" )
 
 
 

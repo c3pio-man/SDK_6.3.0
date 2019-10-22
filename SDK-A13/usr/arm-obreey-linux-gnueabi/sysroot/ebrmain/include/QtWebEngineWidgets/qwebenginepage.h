@@ -41,7 +41,7 @@
 #define QWEBENGINEPAGE_H
 
 #include <QtWebEngineWidgets/qtwebenginewidgetsglobal.h>
-#include <QtWebEngineWidgets/qwebenginecertificateerror.h>
+#include <QtWebEngineWidgets/qwebengineclientcertificateselection.h>
 #include <QtWebEngineWidgets/qwebenginedownloaditem.h>
 #include <QtWebEngineCore/qwebenginecallback.h>
 #include <QtWebEngineCore/qwebenginehttprequest.h>
@@ -59,6 +59,8 @@ class QPrinter;
 
 class QContextMenuBuilder;
 class QWebChannel;
+class QWebEngineCertificateError;
+class QWebEngineClientCertificateSelection;
 class QWebEngineContextMenuData;
 class QWebEngineFullScreenRequest;
 class QWebEngineHistory;
@@ -69,13 +71,12 @@ class QWebEngineQuotaRequest;
 class QWebEngineRegisterProtocolHandlerRequest;
 class QWebEngineScriptCollection;
 class QWebEngineSettings;
+class QWebEngineUrlRequestInterceptor;
 
 class QWEBENGINEWIDGETS_EXPORT QWebEnginePage : public QObject {
     Q_OBJECT
     Q_PROPERTY(QString selectedText READ selectedText)
     Q_PROPERTY(bool hasSelection READ hasSelection)
-
-    // Ex-QWebFrame properties
     Q_PROPERTY(QUrl requestedUrl READ requestedUrl)
     Q_PROPERTY(qreal zoomFactor READ zoomFactor WRITE setZoomFactor)
     Q_PROPERTY(QString title READ title)
@@ -184,9 +185,7 @@ public:
     Q_ENUM(NavigationType)
 
     enum Feature {
-#ifndef Q_QDOC
         Notifications = 0,
-#endif
         Geolocation = 1,
         MediaAudioCapture = 2,
         MediaVideoCapture,
@@ -246,7 +245,9 @@ public:
 
     void findText(const QString &subString, FindFlags options = FindFlags(), const QWebEngineCallback<bool> &resultCallback = QWebEngineCallback<bool>());
 
+#if QT_CONFIG(menu)
     QMenu *createStandardContextMenu();
+#endif
 
     void setFeaturePermission(const QUrl &securityOrigin, Feature feature, PermissionPolicy policy);
 
@@ -301,6 +302,8 @@ public:
     void setDevToolsPage(QWebEnginePage *page);
     QWebEnginePage *devToolsPage() const;
 
+    void setUrlRequestInterceptor(QWebEngineUrlRequestInterceptor *interceptor);
+
     const QWebEngineContextMenuData &contextMenuData() const;
 
 Q_SIGNALS:
@@ -318,6 +321,9 @@ Q_SIGNALS:
     void fullScreenRequested(QWebEngineFullScreenRequest fullScreenRequest);
     void quotaRequested(QWebEngineQuotaRequest quotaRequest);
     void registerProtocolHandlerRequested(QWebEngineRegisterProtocolHandlerRequest request);
+#if !defined(QT_NO_SSL) || QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+    void selectClientCertificate(QWebEngineClientCertificateSelection clientCertSelection);
+#endif
 
     void authenticationRequired(const QUrl &requestUrl, QAuthenticator *authenticator);
     void proxyAuthenticationRequired(const QUrl &requestUrl, QAuthenticator *authenticator, const QString &proxyHost);
@@ -336,6 +342,7 @@ Q_SIGNALS:
     void recentlyAudibleChanged(bool recentlyAudible);
 
     void pdfPrintingFinished(const QString &filePath, bool success);
+    void printRequested();
 
 protected:
     virtual QWebEnginePage *createWindow(WebWindowType type);

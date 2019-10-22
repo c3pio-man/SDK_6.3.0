@@ -2,7 +2,7 @@
 if (NOT TARGET Qt5::qmake)
     add_executable(Qt5::qmake IMPORTED)
 
-    set(imported_location "/usr/local/BUILD/pb-qt-build/SDK_6.3.0/SDK-A13/usr/arm-obreey-linux-gnueabi/sysroot/usr/qt5/bin/qmake")
+    set(imported_location "/srv/jenkins/workspace/fw-builder-ng/U_632_6.0/SDK-B288/usr/arm-obreey-linux-gnueabi/sysroot/usr/qt5/bin/qmake")
     _qt5_Core_check_file_exists(${imported_location})
 
     set_target_properties(Qt5::qmake PROPERTIES
@@ -13,7 +13,7 @@ endif()
 if (NOT TARGET Qt5::moc)
     add_executable(Qt5::moc IMPORTED)
 
-    set(imported_location "/usr/local/BUILD/pb-qt-build/SDK_6.3.0/SDK-A13/usr/arm-obreey-linux-gnueabi/sysroot/usr/qt5/bin/moc")
+    set(imported_location "/srv/jenkins/workspace/fw-builder-ng/U_632_6.0/SDK-B288/usr/arm-obreey-linux-gnueabi/sysroot/usr/qt5/bin/moc")
     _qt5_Core_check_file_exists(${imported_location})
 
     set_target_properties(Qt5::moc PROPERTIES
@@ -26,7 +26,7 @@ endif()
 if (NOT TARGET Qt5::rcc)
     add_executable(Qt5::rcc IMPORTED)
 
-    set(imported_location "/usr/local/BUILD/pb-qt-build/SDK_6.3.0/SDK-A13/usr/arm-obreey-linux-gnueabi/sysroot/usr/qt5/bin/rcc")
+    set(imported_location "/srv/jenkins/workspace/fw-builder-ng/U_632_6.0/SDK-B288/usr/arm-obreey-linux-gnueabi/sysroot/usr/qt5/bin/rcc")
     _qt5_Core_check_file_exists(${imported_location})
 
     set_target_properties(Qt5::rcc PROPERTIES
@@ -66,7 +66,7 @@ set(Qt5_POSITION_INDEPENDENT_CODE True)
 # Applications now need to be compiled with the -fPIC option if the Qt option
 # "reduce relocations" is active. For backward compatibility only, Qt accepts
 # the use of -fPIE for GCC 4.x versions.
-set_property(TARGET Qt5::Core APPEND PROPERTY INTERFACE_COMPILE_OPTIONS )
+set_property(TARGET Qt5::Core APPEND PROPERTY INTERFACE_COMPILE_OPTIONS -fPIC)
 
 # TODO Qt6: Remove
 set(Qt5Core_EXECUTABLE_COMPILE_FLAGS "")

@@ -4,6 +4,7 @@ function(QTQUICK_COMPILER_DETERMINE_OUTPUT_FILENAME outvariable filename)
     file(RELATIVE_PATH relpath ${CMAKE_CURRENT_SOURCE_DIR} ${filename})
     string(REPLACE ".qml" "_qml" relpath ${relpath})
     string(REPLACE ".js" "_js" relpath ${relpath})
+    string(REPLACE ".mjs" "_mjs" relpath ${relpath})
     string(REPLACE "/" "_" relpath ${relpath})
     set(${outvariable} ${CMAKE_CURRENT_BINARY_DIR}/${relpath}.cpp PARENT_SCOPE)
 endfunction()
@@ -17,7 +18,18 @@ function(QTQUICK_COMPILER_ADD_RESOURCES outfiles)
 
     find_package(Qt5 COMPONENTS Qml Core)
 
-    set(compiler_path "${_qt5Core_install_prefix}/bin/qmlcachegen")
+    set(compiler_path "/srv/jenkins/workspace/fw-builder-ng/U_632_6.0/SDK-B288/usr/arm-obreey-linux-gnueabi/sysroot/usr/qt5/bin/qmlcachegen")
+    if(NOT EXISTS "${compiler_path}" )
+        message(FATAL_ERROR "The package \"Qt5QuickCompilerConfig\" references the file
+   \"${compiler_path}\"
+but this file does not exist.  Possible reasons include:
+* The file was deleted, renamed, or moved to another location.
+* An install or uninstall procedure did not complete successfully.
+* The installation package was faulty and contained
+   \"${CMAKE_CURRENT_LIST_FILE}\"
+but not all the files it references.
+")
+    endif()
 
     get_target_property(rcc_path ${Qt5Core_RCC_EXECUTABLE} IMPORTED_LOCATION)
 
@@ -45,16 +57,18 @@ function(QTQUICK_COMPILER_ADD_RESOURCES outfiles)
         set(rcc_file_with_compilation_units)
 
         execute_process(COMMAND ${rcc_path} -list "${input_resource}" OUTPUT_VARIABLE rcc_contents)
-        string(REGEX REPLACE "[\r\n]+" ";" rcc_contents ${rcc_contents})
-        foreach(it ${rcc_contents})
-            get_filename_component(extension ${it} EXT)
-            if(extension STREQUAL ".qml" OR extension STREQUAL ".js" OR extension STREQUAL ".ui.qml")
-                qtquick_compiler_determine_output_filename(output_file ${it})
-                add_custom_command(OUTPUT ${output_file} COMMAND ${compiler_path} ARGS --resource=${input_resource} ${it} -o ${output_file} DEPENDS ${it})
-                list(APPEND compiler_output ${output_file})
-                set(rcc_file_with_compilation_units ${input_resource})
-            endif()
-        endforeach()
+        if (NOT rcc_contents STREQUAL "")
+            string(REGEX REPLACE "[\r\n]+" ";" rcc_contents ${rcc_contents})
+            foreach(it ${rcc_contents})
+                get_filename_component(extension ${it} EXT)
+                if(extension STREQUAL ".qml" OR extension STREQUAL ".js" OR extension STREQUAL ".ui.qml" OR extension STREQUAL ".mjs")
+                    qtquick_compiler_determine_output_filename(output_file ${it})
+                    add_custom_command(OUTPUT ${output_file} COMMAND ${compiler_path} ARGS --resource=${input_resource} ${it} -o ${output_file} DEPENDS ${it})
+                    list(APPEND compiler_output ${output_file})
+                    set(rcc_file_with_compilation_units ${input_resource})
+                endif()
+            endforeach()
+        endif()
 
         if(rcc_file_with_compilation_units)
             list(APPEND rcc_files_with_compilation_units ${rcc_file_with_compilation_units})
@@ -70,4 +84,3 @@ function(QTQUICK_COMPILER_ADD_RESOURCES outfiles)
     qt5_add_resources(output_resources ${filtered_rcc_files} OPTIONS ${options})
     set(${outfiles} ${output_resources} ${compiler_output} PARENT_SCOPE)
 endfunction()
-

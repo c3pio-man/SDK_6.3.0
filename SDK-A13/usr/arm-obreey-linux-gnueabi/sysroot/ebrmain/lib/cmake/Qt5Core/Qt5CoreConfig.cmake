@@ -6,7 +6,7 @@ endif()
 get_filename_component(_qt5Core_install_prefix "${CMAKE_CURRENT_LIST_DIR}/../../../" ABSOLUTE)
 
 # For backwards compatibility only. Use Qt5Core_VERSION instead.
-set(Qt5Core_VERSION_STRING 5.11.2)
+set(Qt5Core_VERSION_STRING 5.12.4)
 
 set(Qt5Core_LIBRARIES Qt5::Core)
 
@@ -43,8 +43,8 @@ if (NOT TARGET Qt5::Core)
 
     set(_Qt5Core_OWN_INCLUDE_DIRS "${_qt5Core_install_prefix}/include/" "${_qt5Core_install_prefix}/include/QtCore")
     set(Qt5Core_PRIVATE_INCLUDE_DIRS
-        "${_qt5Core_install_prefix}/include/QtCore/5.11.2"
-        "${_qt5Core_install_prefix}/include/QtCore/5.11.2/QtCore"
+        "${_qt5Core_install_prefix}/include/QtCore/5.12.4"
+        "${_qt5Core_install_prefix}/include/QtCore/5.12.4/QtCore"
     )
     include("${CMAKE_CURRENT_LIST_DIR}/ExtraSourceIncludes.cmake" OPTIONAL)
 
@@ -88,7 +88,7 @@ if (NOT TARGET Qt5::Core)
     foreach(_module_dep ${_Qt5Core_MODULE_DEPENDENCIES})
         if (NOT Qt5${_module_dep}_FOUND)
             find_package(Qt5${_module_dep}
-                5.11.2 ${_Qt5Core_FIND_VERSION_EXACT}
+                5.12.4 ${_Qt5Core_FIND_VERSION_EXACT}
                 ${_Qt5Core_DEPENDENCIES_FIND_QUIET}
                 ${_Qt5Core_FIND_DEPENDENCIES_REQUIRED}
                 PATHS "${CMAKE_CURRENT_LIST_DIR}/.." NO_DEFAULT_PATH
@@ -122,6 +122,9 @@ if (NOT TARGET Qt5::Core)
     set_property(TARGET Qt5::Core PROPERTY
       INTERFACE_COMPILE_DEFINITIONS QT_CORE_LIB)
 
+    set_property(TARGET Qt5::Core PROPERTY INTERFACE_QT_ENABLED_FEATURES properties;animation;textcodec;big_codecs;codecs;commandlineparser;cxx11_future;textdate;datestring;filesystemiterator;filesystemwatcher;gestures;itemmodel;proxymodel;identityproxymodel;library;mimetype;processenvironment;process;statemachine;qeventtransition;regularexpression;settings;sharedmemory;sortfilterproxymodel;std-atomic64;stringlistmodel;systemsemaphore;temporaryfile;timezone;topleveldomain;translation;xmlstream;xmlstreamreader;xmlstreamwriter)
+    set_property(TARGET Qt5::Core PROPERTY INTERFACE_QT_DISABLED_FEATURES )
+
     set(_Qt5Core_PRIVATE_DIRS_EXIST TRUE)
     foreach (_Qt5Core_PRIVATE_DIR ${Qt5Core_OWN_PRIVATE_INCLUDE_DIRS})
         if (NOT EXISTS ${_Qt5Core_PRIVATE_DIR})
@@ -145,7 +148,7 @@ if (NOT TARGET Qt5::Core)
         )
     endif()
 
-    _populate_Core_target_properties(RELEASE "libQt5Core.so.5.11.2" "" )
+    _populate_Core_target_properties(RELEASE "libQt5Core.so.5.12.4" "" )
 
 
 

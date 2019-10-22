@@ -77,6 +77,11 @@ typedef void (*IRLoaderFunction)(Document *, const QQmlPrivate::CachedQmlUnit *)
 
 typedef QObject *(*QQmlAttachedPropertiesFunc)(QObject *);
 
+inline uint qHash(QQmlAttachedPropertiesFunc func, uint seed = 0)
+{
+    return qHash(quintptr(func), seed);
+}
+
 template <typename TYPE>
 class QQmlTypeInfo
 {
@@ -95,11 +100,23 @@ namespace QQmlPrivate
 {
     void Q_QML_EXPORT qdeclarativeelement_destructor(QObject *);
     template<typename T>
-    class QQmlElement : public T
+    class QQmlElement final : public T
     {
     public:
         ~QQmlElement() override {
             QQmlPrivate::qdeclarativeelement_destructor(this);
+        }
+        static void operator delete(void *ptr) {
+            // We allocate memory from this class in QQmlType::create
+            // along with some additional memory.
+            // So we override the operator delete in order to avoid the
+            // sized operator delete to be called with a different size than
+            // the size that was allocated.
+            ::operator delete (ptr);
+        }
+        static void operator delete(void *, void *) {
+            // Deliberately empty placement delete operator.
+            // Silences MSVC warning C4291: no matching operator delete found
         }
     };
 
@@ -173,16 +190,13 @@ namespace QQmlPrivate
     template<typename T>
     class AttachedPropertySelector<T, 1>
     {
-        static inline QObject *attachedProperties(QObject *obj) {
-            return T::qmlAttachedProperties(obj);
-        }
         template<typename ReturnType>
         static inline const QMetaObject *attachedPropertiesMetaObject(ReturnType *(*)(QObject *)) {
             return &ReturnType::staticMetaObject;
         }
     public:
         static inline QQmlAttachedPropertiesFunc func() {
-            return &attachedProperties;
+            return QQmlAttachedPropertiesFunc(&T::qmlAttachedProperties);
         }
         static inline const QMetaObject *metaObject() {
             return attachedPropertiesMetaObject(&T::qmlAttachedProperties);

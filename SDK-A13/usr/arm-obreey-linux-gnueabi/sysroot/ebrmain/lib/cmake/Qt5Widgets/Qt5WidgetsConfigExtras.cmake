@@ -2,7 +2,7 @@
 if (NOT TARGET Qt5::uic)
     add_executable(Qt5::uic IMPORTED)
 
-    set(imported_location "/usr/local/BUILD/pb-qt-build/SDK_6.3.0/SDK-A13/usr/arm-obreey-linux-gnueabi/sysroot/usr/qt5/bin/uic")
+    set(imported_location "/srv/jenkins/workspace/fw-builder-ng/U_632_6.0/SDK-B288/usr/arm-obreey-linux-gnueabi/sysroot/usr/qt5/bin/uic")
     _qt5_Widgets_check_file_exists(${imported_location})
 
     set_target_properties(Qt5::uic PROPERTIES
