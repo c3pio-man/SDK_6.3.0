@@ -14,7 +14,7 @@ class DbManagerHelper
 {
 public:
     DbManagerHelper(const std::string& filename, const std::string& corruption_flag_name,
-                    int version, const std::string& version_scripts_filename,
+                    int version, const std::string& version_scripts_dir,
                     const std::vector<std::string>& create_requests);
     int GetDb(pocketbook::utilities::Sqlite& sqlite);
     int GetDb(pocketbook::utilities::Sqlite& sqlite, const std::string& filename);
@@ -31,7 +31,7 @@ private:
     std::string filename_;
     std::string corrupt_flag_name_;
     int version_ = 0;
-    std::string version_scripts_filename_;
+    std::string version_scripts_dir_;
     std::vector<std::string> create_requests_;
 
 };

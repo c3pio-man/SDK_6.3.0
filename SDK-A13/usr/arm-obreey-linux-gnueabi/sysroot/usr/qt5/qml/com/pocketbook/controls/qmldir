@@ -1,0 +1,4 @@
+module com.pocketbook.controls
+plugin pbcomponents
+classname PBComponentsPlugin
+typeinfo plugins.qmltypes

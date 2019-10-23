@@ -54,6 +54,7 @@ set(ENV{PKG_CONFIG_DIR} \"\")
 set(ENV{PKG_CONFIG_LIBDIR} \${CMAKE_FIND_ROOT_PATH}/usr/lib/pkgconfig)
 set(ENV{PKG_CONFIG_SYSROOT_DIR} \${CMAKE_FIND_ROOT_PATH})
 set(ENV{LD_LIBRARY_PATH} ${SDK_ROOT}/lib)
+set(PBRES \"${SDK_ROOT}/bin/pbres\")
 list(APPEND PB_LINK_DIRECTORIES \"${SDK_ROOT}/${TARGET_ARM}/sysroot/usr/lib\")
 list(APPEND PB_LINK_DIRECTORIES \"${SDK_ROOT}/${TARGET_ARM}/sysroot/usr/local/lib\")
 list(APPEND PB_INCLUDE_DIRECTORIES \"${SDK_ROOT}/${TARGET_ARM}/sysroot/usr/include\")
@@ -111,7 +112,7 @@ set(CMAKE_SHARED_LINKER_FLAGS_DEBUG \"\" CACHE STRING \"\" FORCE)
 
 set(CMAKE_INSTALL_PREFIX \"${SDK_ROOT}/local\" CACHE PATH \"Installation Prefix\")
 add_definitions(-DEMULATOR -DPLATFORM_NX)
-
+set(PBRES \"${SDK_ROOT}/bin/pbres\")
 set(PB_PLATFORM \"PC\" CACHE STRING  \"ARM|PC Readonly!\") " > ${CMAKE_TOOLCHAIN_FILE_PC}
 
 TOOLCHAIN=${TOOLCHAIN_PATH}

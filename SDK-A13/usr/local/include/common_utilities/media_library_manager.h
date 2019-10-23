@@ -28,7 +28,7 @@ public:
         std::string fast_hash_;
         std::map<std::string, std::string> props_;
         bool is_metadata_extracted_ = false;
-        int timestamp_ = 0;
+        long long timestamp_ = 0;
         Track(const char* filename, const char * title):filename_(filename),title_(title){}
         Track() {}
     };

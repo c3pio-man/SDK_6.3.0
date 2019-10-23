@@ -91,7 +91,7 @@ public:
     };
 
     Downloader();
-    ~Downloader(){}
+    ~Downloader();
     /**
       \brief Initialize object. This function should be called only once after construction
        before any other function call

@@ -63,6 +63,10 @@ Software development
 * Libtool: (libtool).           Generic shared library support script.
 * Stabs: (stabs).               The "stabs" debugging information format.
 * bison: (bison).               GNU parser generator (Yacc replacement).
-* gccinstall: (gccinstall).     Installing the GNU Compiler Collection.
+* g++: (gcc).                   The GNU C++ compiler.
+* gcc: (gcc).                   The GNU Compiler Collection.
 * gccint: (gccint).             Internals of the GNU Compiler Collection.
+* gcov-tool: (gcc) Gcov-tool.   'gcov-tool'--an offline gcda profile 
+                                  processing program.
+* gcov: (gcc) Gcov.             'gcov'--a test coverage program.
 * gdbserver: (gdb) Server.      The GNU debugging server.

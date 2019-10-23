@@ -25,6 +25,7 @@ public:
         kErrUnknown,
         kErrRestrictedContent,
         kErrNoSpaceOnCloud,
+        kErrLegalTermsAreNotAccepted,
     };
 
     enum Status {

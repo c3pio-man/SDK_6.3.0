@@ -4,6 +4,12 @@
 #include "inkplatform.h"
 #include "inkview.h"
 
+#include <ft2build.h>
+#include FT_FREETYPE_H
+#include FT_GLYPH_H
+#include FT_IMAGE_H
+#include FT_OUTLINE_H
+
 #ifndef EMULATOR
 #include <dlfcn.h>
 #include <sys/ioctl.h>
@@ -568,8 +574,9 @@ typedef struct iv_mpctl_s {
 
     unsigned long keymask;
     unsigned long lastactivity;
-    unsigned long gka0;
-    unsigned long gka1;
+    unsigned long gka0; //keymask for global short press action
+    unsigned long gka1; //keymask for global long press action
+    unsigned long gka2; //keymask for global double click action
 
     int evtsize;
     int evthead;
@@ -630,8 +637,7 @@ typedef struct iv_mpctl_s {
     int menca_status;
     int partner_change_counter;
     pid_t netscript_start_pid;
-    unsigned long high_priority_job_start_time; // sec CLOCK_MONOTONIC
-    unsigned long high_priority_job_duration; // sec
+    unsigned long high_priority_job_valid_until[2]; // sec
 
     //frontlight ver 2
     hw_frontlight fl;
@@ -651,6 +657,10 @@ typedef struct iv_mpctl_s {
     int avrcp_receiver_pid;
     PB_STATE browser_state;
     pid_t browser_playing_pid;
+
+    int package_processing_progress;
+    int package_processing_progress_pid;
+
 } iv_mpctl;
 
 typedef struct eink_cmd_s {
@@ -898,6 +908,9 @@ int hw_eink_init();
 int hw_gsensor_init();
 int hw_touchpanel_init();
 int hw_captouch_init();
+bool hw_is_touch_enabled(void);
+void hw_touch_enable(bool onOff);
+
 void hw_close();
 void hw_io_close();
 void hw_eink_close();
@@ -920,6 +933,7 @@ void hw_fullupdate();
 void hw_fullupdate_hq();
 void hw_refine16();
 int hw_capable16();
+void hw_get_wftimes(uint16_t result[16]);
 void hw_switch_dynamic(int n);
 void hw_override_update(int mode);
 void hw_suspend_display();
@@ -977,14 +991,14 @@ char *hw_get3gimei();
 int hw_geta2dpstatus(void);
 int hw_writelogo(const ibitmap *bm, int permanent);
 void hw_show_poweroff_logo();
-int hw_write_lowpower_logo(const char *logo);
+int hw_write_lowpower_logo(const char *low_power_logo);
 void hw_change_logo_by_lang(int bits_logo_type); // 1 - boot logo; 2 - low battery logo
 int hw_restorelogo();
 int hw_usbready();
 void hw_usblink();
 void hw_set_keylock(int en);
 int hw_get_keylock();
-void hw_setglobalkeymask(long gka0, long gka1);
+void hw_setglobalkeymask(unsigned long gka0, unsigned long gka1, unsigned long gka2);
 int hw_touchpanel_ready();
 int hw_gsensor_ready();
 int hw_read_gsensor(int *x, int *y, int *z, int raw);
@@ -1205,8 +1219,8 @@ void iv_update_orientation(int isexternal);
 void iv_check_gsensor();
 int iv_transform_key(int key);
 void iv_keyswitch_rtl(int *par);
-void iv_getkeymapping(int what, const char *act0[], const char *act1[], int count);
-void iv_getglobalkeymapping(const char *act0[], const char *act1[], int count);
+void iv_getkeymapping(keymap_t type, const char *act0[], const char *act1[], const char *act2[], int count);
+void iv_getglobalkeymapping(const char *act0[], const char *act1[], const char *act2[], int count);
 void iv_rise_poweroff_timer();
 void iv_key_timer();
 void iv_poweroff_timer();

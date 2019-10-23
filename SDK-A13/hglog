@@ -1,5 +1,90 @@
-changeset:   67:1ac607919d1f
+changeset:   84:20431a997e8f
 tag:         tip
+user:        Igor Chumak <ichumak@pocketbook.com.ua>
+date:        Mon Sep 30 11:58:48 2019 +0300
+summary:     #91234 lost symlink to mkfs.vfat; use internal busybox install.sh to fix - upd
+
+changeset:   83:c9d4c44b6a97
+user:        Igor Chumak <ichumak@pocketbook.com.ua>
+date:        Mon Sep 30 11:46:32 2019 +0300
+summary:     #91234 lost symlink to mkfs.vfat; use internal busybox install.sh to fix
+
+changeset:   82:969772e4ba86
+user:        Igor Chumak <ichumak@pocketbook.com.ua>
+date:        Tue Sep 24 20:08:08 2019 +0300
+summary:     Add dosfstools
+
+changeset:   81:ad2ebf3d0757
+user:        Igor Chumak <ichumak@pocketbook.com.ua>
+date:        Tue Sep 24 17:43:50 2019 +0300
+summary:     Add dosfstools
+
+changeset:   80:667d2b7c881a
+user:        Igor Chumak <ichumak@pocketbook.com.ua>
+date:        Mon Aug 19 12:06:37 2019 +0300
+summary:     Add json tool to sysroot
+
+changeset:   79:1185d29c3740
+user:        Andrii Bilynets
+date:        Fri Aug 16 21:37:50 2019 +0300
+summary:     add json tool
+
+changeset:   78:726d3bd3f275
+user:        Igor Chumak <igor.chumak@obreey-products.com>
+date:        Fri Aug 16 13:37:50 2019 +0300
+summary:     Обращённый набор изменений: 259aab5a245c
+
+changeset:   77:cdba1f2de193
+user:        Igor Chumak <igor.chumak@obreey-products.com>
+date:        Fri Aug 16 13:37:39 2019 +0300
+summary:     Обращённый набор изменений: fdf452f5f620
+
+changeset:   76:fdf452f5f620
+user:        Igor Chumak <igor.chumak@obreey-products.com>
+date:        Fri Aug 16 13:28:40 2019 +0300
+summary:     Fix busybox links, broken by util-linux
+
+changeset:   75:259aab5a245c
+user:        Igor Chumak <igor.chumak@obreey-products.com>
+date:        Thu Aug 01 11:44:57 2019 +0300
+summary:     #89187 Add sfdisk to toolchain
+
+changeset:   74:ab92e727ebb5
+user:        Igor Chumak <igor.chumak@obreey-products.com>
+date:        Wed Jun 05 18:21:40 2019 +0300
+summary:     Fix typo in opencv build
+
+changeset:   73:75d100470b79
+user:        Igor Chumak <ichumak@pocketbook.com.ua>
+date:        Fri Mar 01 19:02:01 2019 +0200
+summary:     Use libdatacollector.a from Adobe
+
+changeset:   72:df2cecb430f8
+user:        Igor Chumak <igor.chumak@obreey-products.com>
+date:        Thu Jan 10 12:31:01 2019 +0200
+summary:     Add gtest to SDK
+
+changeset:   71:af7e038df424
+user:        Igor Chumak <ichumak@pocketbook.com.ua>
+date:        Mon Nov 26 17:23:03 2018 +0200
+summary:     Use PBRES variable in toolhain file
+
+changeset:   70:55dd577d4456
+user:        Igor Chumak <ichumak@pocketbook.com.ua>
+date:        Mon Nov 26 16:56:29 2018 +0200
+summary:     Fix prev
+
+changeset:   69:2112c49a7e0f
+user:        Igor Chumak <igor.chumak@obreey-products.com>
+date:        Mon Nov 26 15:18:27 2018 +0200
+summary:     Build pbres with SDK
+
+changeset:   68:1eb7e94f9c6e
+user:        Igor Chumak <ichumak@pocketbook.com.ua>
+date:        Thu Nov 01 19:35:40 2018 +0200
+summary:     Make configs same
+
+changeset:   67:1ac607919d1f
 user:        Igor Chumak <ichumak@pocketbook.com.ua>
 date:        Wed Oct 31 14:29:59 2018 +0200
 summary:     #77814 add symlink do build qt-5.11

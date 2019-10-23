@@ -1,8 +1,8 @@
-QT.webenginewidgets_private.VERSION = 5.11.2
+QT.webenginewidgets_private.VERSION = 5.13.0
 QT.webenginewidgets_private.name = QtWebEngineWidgets
 QT.webenginewidgets_private.module =
 QT.webenginewidgets_private.libs = $$QT_MODULE_LIB_BASE
-QT.webenginewidgets_private.includes = $$QT_MODULE_INCLUDE_BASE/QtWebEngineWidgets/5.11.2 $$QT_MODULE_INCLUDE_BASE/QtWebEngineWidgets/5.11.2/QtWebEngineWidgets
+QT.webenginewidgets_private.includes = $$QT_MODULE_INCLUDE_BASE/QtWebEngineWidgets/5.13.0 $$QT_MODULE_INCLUDE_BASE/QtWebEngineWidgets/5.13.0/QtWebEngineWidgets
 QT.webenginewidgets_private.frameworks =
 QT.webenginewidgets_private.depends = webenginewidgets
 QT.webenginewidgets_private.uses =

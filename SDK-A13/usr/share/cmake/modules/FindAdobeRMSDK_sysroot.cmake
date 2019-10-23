@@ -33,6 +33,10 @@ FIND_LIBRARY(ADOBE_RMSDK_LIBRARIES_MSCHEMA
   NAMES libmschema.a
   PATHS /lib /usr/lib /usr/local/lib
 )
+FIND_LIBRARY(ADOBE_RMSDK_LIBRARIES_libdatacollector
+  NAMES libdatacollector.a
+  PATHS /lib /usr/lib /usr/local/lib
+)
 
 
 IF (ADOBE_RMSDK_LIBRARIES_MSCHEMA 
@@ -49,6 +53,7 @@ set(ADOBE_RMSDK_LIBRARIES
 	${ADOBE_RMSDK_LIBRARIES_cryptopenssl} 
 	${ADOBE_RMSDK_LIBRARIES_adobermsdk}
 	${ADOBE_RMSDK_LIBRARIES_adept}
+	${ADOBE_RMSDK_LIBRARIES_libdatacollector}
 	)
 ELSE ()
   SET(ADOBE_RMSDK_FOUND "NO")

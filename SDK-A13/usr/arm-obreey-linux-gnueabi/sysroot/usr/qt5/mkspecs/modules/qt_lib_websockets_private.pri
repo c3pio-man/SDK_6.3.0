@@ -1,8 +1,8 @@
-QT.websockets_private.VERSION = 5.11.2
+QT.websockets_private.VERSION = 5.12.4
 QT.websockets_private.name = QtWebSockets
 QT.websockets_private.module =
 QT.websockets_private.libs = $$QT_MODULE_LIB_BASE
-QT.websockets_private.includes = $$QT_MODULE_INCLUDE_BASE/QtWebSockets/5.11.2 $$QT_MODULE_INCLUDE_BASE/QtWebSockets/5.11.2/QtWebSockets
+QT.websockets_private.includes = $$QT_MODULE_INCLUDE_BASE/QtWebSockets/5.12.4 $$QT_MODULE_INCLUDE_BASE/QtWebSockets/5.12.4/QtWebSockets
 QT.websockets_private.frameworks =
 QT.websockets_private.depends = core_private websockets
 QT.websockets_private.uses =

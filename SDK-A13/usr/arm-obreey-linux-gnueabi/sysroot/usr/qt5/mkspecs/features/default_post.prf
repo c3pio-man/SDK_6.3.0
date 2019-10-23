@@ -113,6 +113,8 @@ breakpad {
     !isEmpty(QMAKE_STRIP):QMAKE_POST_LINK = $$QMAKE_POST_LINK$$escape_expand(\\n\\t)$$quote($$QMAKE_STRIP $$DEBUGFILENAME)
 }
 
+c++17: CONFIG += c++1z
+
 !c++11:!c++14:!c++1z {
     # Qt requires C++11 since 5.7, check if we need to force a compiler option
     QT_COMPILER_STDCXX_no_L = $$replace(QT_COMPILER_STDCXX, "L$", "")
@@ -134,13 +136,26 @@ c++11|c++14|c++1z {
     isEmpty(QMAKE_CXXFLAGS_GNU$$cxxstd) {
         strict_c++: QMAKE_CXXFLAGS += $$QMAKE_CXXFLAGS_STRICTCXX
     } else {
-        !strict_c++: cxxstd = GNU$$cxxstd
+        !strict_c++|isEmpty(QMAKE_CXXFLAGS_$$cxxstd): cxxstd = GNU$$cxxstd
     }
 
     QMAKE_CXXFLAGS += $$eval(QMAKE_CXXFLAGS_$$cxxstd)
     QMAKE_LFLAGS += $$eval(QMAKE_LFLAGS_$$cxxstd)
 
     unset(cxxstd)
+}
+
+c99|c11 {
+    c11:       cstd = C11
+    else:      cstd = C99
+
+    !isEmpty(QMAKE_CFLAGS_GNU$$cstd) {
+        !strict_c|isEmpty(QMAKE_CFLAGS_$$cstd): cstd = GNU$$cstd
+    }
+
+    QMAKE_CFLAGS += $$eval(QMAKE_CFLAGS_$$cstd)
+
+    unset(cstd)
 }
 
 utf8_source {

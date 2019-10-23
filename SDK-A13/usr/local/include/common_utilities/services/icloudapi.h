@@ -30,6 +30,7 @@ public:
     enum SyncError {
         kUnknown,
         kNoSpace,
+        kLegalTermsAreNotAccepted,
     };
 
     virtual SyncError getSyncError() = 0;

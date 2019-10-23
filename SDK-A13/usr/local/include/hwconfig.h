@@ -36,6 +36,11 @@ typedef enum {
 	DEVICE_740 = 21,
 	DEVICE_616 = 22,
 	DEVICE_632 = 23,
+	DEVICE_626 = 24,
+	DEVICE_840,
+	DEVICE_840_2,
+	DEVICE_740_2,
+	DEVICE_1040,
 } device_id_t;
 
 // ================ display and epd controller ==============
@@ -51,6 +56,7 @@ typedef enum {
 	DISPLAY_4INCH_480_800 = 8, // display 480x800 4.3"
 	DISPLAY_6INCH_1072_1448, // display 1448x1072 6"
 	DISPLAY_7INCH_1872_1404, // display 1404x1872 7"
+	DISPLAY_10INCH_1872_1404, //display 1404x1872 10.3"
 } display_id_t;
 
 typedef enum {
@@ -89,18 +95,27 @@ typedef enum {
   KEYBOARD_POCKET740 = 19,
   KEYBOARD_POCKET616 = 20,
   KEYBOARD_POCKET632 = 21,
+  KEYBOARD_POCKET1040 = 22, //like 632, but without standart power button. Power button is KEY_MENU
 } keyboard_id_t;
 
 typedef enum {
 	TOUCHPANEL_NONE = 0,
 	TOUCHPANEL_IR_zFORCE = 4, //631
 	TOUCHPANEL_ELAN_eKTF2227 = 8, //626, 641
+	TOUCHPANEL_FT5X_840 = 9, //840_1
 	TOUCHPANEL_ELAN_eKTF2232 = 16, //627
-	TOUCHPANEL_TT21XXX= 17, //632
+	TOUCHPANEL_TT21XXX = 17, //632
+	TOUCHPANEL_FT5X = 18, //626 CY8CTMA30
+	TOUCHPANEL_CYTTSP4 = 19, //626 CY8CTMA4
+	TOUCHPANEL_TMA448 = 20, //1040
+	TOUCHPANEL_TT41701 = 21, //740; 740-2; TT41701 TrueTouch
+	TOUCHPANEL_ELAN_eKTF2232ALW, //ETKF2232ALW 627 updated tp lamination
+
 } touchpanel_id_t;
 
 typedef enum {
 	SLIDER_NONE = 0,
+	SLIDER_HWEVT,
 } slider_id_t;
 
 typedef enum {
@@ -110,9 +125,17 @@ typedef enum {
 
 // ============== peripherals ===================
 
+// ===== audio ====
 typedef enum audio_e {
 	AUDIO_NONE = 0,
 	AUDIO_OSS,
+
+	/*
+	 * Static hardware alsa configuration (without virtual audio card).
+	 * Without hp detection or hp disconnect event only.
+	 * Audio have to start playing without hp detection.
+	 */
+	AUDIO_ALSA_NO_HP_DETECTION = 3,
 
 	/*
 	 * Static hardware alsa configuration (without virtual audio card).
@@ -126,6 +149,29 @@ typedef enum audio_e {
 	AUDIO_ALOOP,
 } audio_id_t;
 
+audio_id_t device_audio(void);
+bool device_has_audio(void);
+
+/*
+ * Detection of attach/detach HP. It is used periodical polling of status file.
+ */
+typedef struct hp_detect_cfg_s {
+	/*
+	 * path to file node which contains hp status
+	 */
+	const char *path;
+	/*
+	 * if status which is read from @path equals @attach_phrase system assumes than hp is connected
+	 */
+	const char *attach_phrase;
+	/*
+	 * invert hp status
+	 */
+	bool inverted;
+} hp_detect_cfg_t;
+const hp_detect_cfg_t *device_hp_detect_cfg(void);
+
+// ===== usb ====
 typedef enum {
 	USB_NONE = 0,
 	USB_INTERNAL = 3 //using testscript
@@ -177,6 +223,18 @@ unsigned int device_display_scanline(void); //deprecated...not configured
 unsigned int device_display_dpi(void);
 uint8_t device_display_position(void);
 
+typedef enum {
+	WAVEFORM_INIT  = 0,
+	WAVEFORM_DU    = 1,
+	WAVEFORM_GC16  = 2,
+	WAVEFORM_GC4   = 3,
+	WAVEFORM_A2    = 4,
+	WAVEFORM_GL16  = 5,
+	WAVEFORM_A2IN  = 6,
+	WAVEFORM_A2OUT = 7,
+	WAVEFORM_DU4   = 8,
+} waveform_type_t;
+
 typedef struct {
 	int version;
 	int type;
@@ -191,9 +249,10 @@ typedef struct {
 	void (*rotate)(int value);
 	int  (*update)(int x, int y, int w, int h, int wf, int mode);
 	int  (*busy)(void);
-    void (*sync)(void);
-    void (*lock)(void);
-    void (*unlock)(void);
+	void (*getwftimes)(uint16_t result[16]);
+	void (*sync)(void);
+	void (*lock)(void);
+	void (*unlock)(void);
 } epdc_instance_t;
 
 epdc_id_t device_epdc(void);
@@ -221,10 +280,13 @@ typedef enum {
 	HWKEY_POWER =      0x00004000,
 	HWKEY_PREV2 =      0x00008000,
 	HWKEY_HOME =       0x00010000,
-	HWKEY_PLUS2 =      0x00080000,
-	HWKEY_MINUS2 =     0x00100000,
+	HWKEY_RESERVED1 =  0x00020000,
+	HWKEY_RESERVED2 =  0x00040000,
+	HWKEY_RESERVED3 =  0x00080000,
+	HWKEY_RESERVED4 =  0x00100000,
 	HWKEY_ZOOMIN =     0x00200000,
 	HWKEY_ZOOMOUT =    0x00400000,
+	HWKEY_POWEROFF =   0x00800000, //reserved by power off function
 	HWKEY_COVEROPEN =  0x01000000,
 	HWKEY_COVERCLOSE = 0x02000000,
 } hwkey_t;
@@ -239,11 +301,17 @@ const int *device_touchpanel_getmatrix(void);
 slider_id_t device_slider(void);
 bool device_has_slider(void);
 
-gyroscop_id_t device_gyroscope(void);
-bool device_has_gyroscope(void);
+typedef struct slider_cfg_s {
+	int resolution; //max axis value
+	bool reverse_axis;
+	bool relative; //absolute or relative type
+} slider_cfg_t;
 
-audio_id_t device_audio(void);
-bool device_has_audio(void);
+const slider_cfg_t *device_slider_cfg(void);
+
+gyroscop_id_t device_gyroscope(void);
+uint8_t device_gyroscope_placement(void);
+bool device_has_gyroscope(void);
 
 bool device_has_extcard(void);
 

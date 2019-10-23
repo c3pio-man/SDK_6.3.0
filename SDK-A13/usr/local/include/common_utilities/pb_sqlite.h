@@ -107,7 +107,7 @@ public:
   */
 class Statement
 {
-    sqlite3_stmt* stmt_;    // Underlying statement
+    sqlite3_stmt* stmt_ = nullptr;    // Underlying statement
     std::function<void()> corrupt_handler_;
 
     // Create this object through Sqlite::prepare function

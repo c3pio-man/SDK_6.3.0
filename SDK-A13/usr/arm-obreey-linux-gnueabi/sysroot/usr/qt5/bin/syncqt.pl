@@ -941,7 +941,7 @@ foreach my $lib (@modules_to_sync) {
     my %master_contents = ();
 
     #remove the old files
-    if($remove_stale) {
+    if ($remove_stale && !$minimal) {
         my %injections = ();
         for my $p (keys %inject_headers) {
             next unless ($p =~ /^\Q$dir\E(\/|$)/);
@@ -1111,7 +1111,7 @@ foreach my $lib (@modules_to_sync) {
                             elsif (!$shadow) {
                                 $pri_install_pfiles.= "$pri_install_iheader ";;
                             }
-                            $pri_injections .= fixPaths($iheader, $out_basedir)
+                            $pri_injections .= fixPaths($iheader, $build_basedir)
                                                .":".($no_stamp ? "^" : "").fixPaths($oheader, "$out_basedir/include/$lib")
                                                .$injection." " if ($shadow);
                         }

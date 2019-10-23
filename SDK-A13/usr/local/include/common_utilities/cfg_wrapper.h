@@ -3,6 +3,7 @@
 
 #include <string>
 #include "inkview.h"
+#include <set>
 
 namespace pocketbook {
 namespace utilities {
@@ -45,6 +46,7 @@ public:
     void saveAndClose();
     void save();
     bool isOpened();
+    std::set<std::string> getKeys();
 private:
     iconfig* cfg_ = nullptr;
     OpenMode mode_;

@@ -1,0 +1,4 @@
+module com.pocketbook.bookinfo
+plugin pbbookinfo
+classname PBComponentsPlugin
+typeinfo plugins.qmltypes

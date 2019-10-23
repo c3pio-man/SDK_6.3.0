@@ -22,13 +22,8 @@
 #include <signal.h>
 #include <errno.h>
 #include <zlib.h>
-#include <ft2build.h>
 #include <pthread.h>
 #include <stdbool.h>
-#include FT_FREETYPE_H
-#include FT_GLYPH_H
-#include FT_IMAGE_H
-#include FT_OUTLINE_H
 
 #ifdef __cplusplus
 extern "C"
@@ -118,7 +113,6 @@ extern "C"
 #define OBREEYSYNC_V2_APP_PATH SYSTEMDATA "/bin/universal_sync.app"
 #define OBREEYSOCIAL_APP_PATH SYSTEMDATA "/bin/obreeysocial.app"
 #define USAGE_STAT_APP_PATH SYSTEMDATA "/bin/usage_stat.app"
-#define DROPBOX_APP_PATH SYSTEMDATA "/bin/dropbox.app"
 #define CONTROL_PANEL_APP_PATH SYSTEMDATA "/bin/control_panel_mgr.app"
 #define USEREXPLORER USERDATA "/bin/explorer.app"
 #define SYSTEMEXPLORER SYSTEMDATA "/bin/explorer.app"
@@ -185,6 +179,7 @@ extern "C"
 #define CONFIGURED_DEVICE_CFG VARRUNDIR "/device.cfg"
 
 #define LOGO_APP_PATH SYSTEMDATA "/bin/power_off_logo.app"
+#define RESTORE_DEFAULT_BOOT_LOGO_APP_PATH SYSTEMDATA "/bin/restore_default_boot_logo.app"
 
 #define BROWSER_FOR_AUTH SYSTEMDATA "/bin/browser.app"
 // sockets names
@@ -360,7 +355,13 @@ extern const char * OBREEY_SOCIAL_COOKIES_PATH;
 #define EVT_PANEL_FRONT_LIGHT 133
 
 #define EVT_GLOBALREQUEST 149
-#define EVT_GLOBALACTION  150
+
+enum globalaction_on_event_e {
+	GLOBALACTION_ON_KEYPRESS = 0, //masked by mpc->gka0
+	GLOBALACTION_ON_KEYHOLD, //masked by mpc->gka1
+	GLOBALACTION_ON_DOUBLECLICK, //masked by mpc->gka2
+};
+#define EVT_GLOBALACTION  150 //send to taskmanager par1 = key, par2 = enum globalaction_on_event_e
 #define EVT_FOREGROUND    151
 #define EVT_BACKGROUND    152
 #define EVT_SUBTASKCLOSE  153
@@ -405,6 +406,8 @@ extern const char * OBREEY_SOCIAL_COOKIES_PATH;
 
 #define EVT_AUDIO_CHANGED 265 //audio output routing was changed
 
+#define EVT_PACKAGE_JOB_CHANGED 266
+
 enum AvrcpCommands{
     AVRCP_NEXT,
     AVRCP_PREVIOUS,
@@ -413,6 +416,22 @@ enum AvrcpCommands{
     AVRCP_STOP,
     AVRCP_PLAY,
     AVRCP_SET_VOLUME,
+};
+
+enum PackageType {
+    PT_UNKNOWN,
+    PT_TTS,
+};
+
+enum PackageJobActions {
+    PJA_JOBS_STARTED,
+    PJA_PACKAGE_DOWNLOAD_STARTED,
+    PJA_PACKAGE_DOWNLOAD_FINISHED,
+    PJA_PACKAGE_INSTALL_STARTED,
+    PJA_PACKAGE_INSTALL_FINISHED,
+    PJA_PACKAGE_UNINSTALL_STARTED,
+    PJA_PACKAGE_UNINSTALL_FINISHED,
+    PJA_JOBS_FINISHED,
 };
 
 #define ISKEYEVENT(x) ((x)>=25 && (x)<=28)
@@ -443,6 +462,7 @@ enum AvrcpCommands{
 #define IV_KEY_ZOOMOUT 0x06
 #define IV_KEY_ZOOMIN  0x07
 #define IV_KEY_MENU_POWER 0x04
+#define IV_KEY_MAX 0x20
 
 /* KEYBOARD STATE KEYS */
 #define IV_KEY_SHIFT 0x0E
@@ -460,9 +480,15 @@ enum AvrcpCommands{
 #define IV_KEY_8 0x38
 #define IV_KEY_9 0x39
 
-#define KEYMAPPING_GLOBAL 0
-#define KEYMAPPING_TXT    1
-#define KEYMAPPING_PDF    2
+typedef enum keymap_e {
+	KEYMAP_GLOBAL = 0,
+	KEYMAP_TXT,
+	KEYMAP_PDF,
+} keymap_t;
+
+#define KEYMAPPING_GLOBAL KEYMAP_GLOBAL
+#define KEYMAPPING_TXT    KEYMAP_TXT
+#define KEYMAPPING_PDF    KEYMAP_PDF
 
 #define BLACK 0x000000
 #define DGRAY 0x555555
@@ -607,6 +633,8 @@ enum AvrcpCommands{
 #define TASK_OOMPROOF        0x4000
 #define TASK_AUTORESTART     0x8000
 #define TASK_DONTSENDTASKMSG 0x00010000
+#define TASK_LOW_PRIORITY_FOR_OOM_KILL 0x00020000
+#define TASK_HIGH_PRIORITY_FOR_OOM_KILL 0x00040000
 #define TASK_DONTCHANGE      0xffffffff
 
 #define TASK_BACKGROUND ((TASK_HIDDEN | TASK_NOUPDATEONFOCUS | TASK_OUTOFSTACK))
@@ -649,6 +677,9 @@ enum AvrcpCommands{
 #define REQ_PB_CLOUD_NEW_POSITION 94
 #define REQ_PREVTRACK 95
 #define REQ_NEXTTRACK 96
+#define REQ_PB_CLOUD_BOOKMARKS_SYNCED 97
+#define REQ_TOUCHSCREEN 98
+#define REQ_EXPLORER 99
 
 #define ALIGN_LEFT 1
 #define ALIGN_CENTER 2
@@ -1258,6 +1289,27 @@ typedef struct itimer_s {
     long long lastchecktime;
 } itimer;
 
+enum iepub3data_type_s {
+    kEPUB3DataTypeNone          = 0,
+
+    kEPUB3TitleTypeMain         = 1,
+    kEPUB3TitleTypeSubtitle     = 2,
+    kEPUB3TitleTypeShort        = 3,
+    kEPUB3TitleTypeCollection   = 4,
+    kEPUB3TitleTypeEdition      = 5,
+    kEPUB3TitleTypeExpanded     = 6,
+    kEPUB3TitleTypeMAX,
+
+    kEPUB3AuthorType            = 101,
+};
+
+typedef struct iepub3title_s
+{
+    char *title;
+    short display_seq; // 0 - is unknown
+    short type; // iepub3data_type_s
+} iepub3title;
+
 typedef struct bookinfo_s {
 
     int type;
@@ -1281,7 +1333,11 @@ typedef struct bookinfo_s {
     char *lang;
     char *publisher;
     char *identifiers;
-
+    int contains_notes_export;
+    iepub3title **epub3titles;
+    char *title_sort;
+    char *author_sort;
+    char *version;
 } bookinfo;
 
 typedef struct iv_filetype_s {
@@ -1617,17 +1673,54 @@ int GetGSensorOrientation();
 
 // Graphic functions. Color=0x00RRGGBB
 
-enum estyle{
-    ROUND_ALL = 1,
-    ROUND_TOP,
-    ROUND_DOWN,
-    ROUND_LEFT,
-    ROUND_RIGHT,
-    ROUND_TOP_LEFT,
-    ROUND_TOP_RIGHT,
-    ROUND_BOTTOM_LEFT,
-    ROUND_BOTTOM_RIGHT
+enum eside {
+    SIDE_NONE = 0,
+    SIDE_LEFT = 1,
+    SIDE_RIGHT = 2,
+    SIDE_TOP = 4,
+    SIDE_BOTTOM = 8,
+    SIDE_ALL = SIDE_LEFT | SIDE_RIGHT | SIDE_TOP | SIDE_BOTTOM,
 };
+
+enum edef_thickness {
+    // thickness > 0 - non-default thickness
+    THICKNESS_DEF_NONE          = 0, // not used
+    THICKNESS_DEF_SINGLE        = -1, // 1px
+    THICKNESS_DEF_FOCUSED_FRAME = -2, // 4px for 300dpi
+    THICKNESS_DEF_DIALOG_FRAME  = -3, // 8px for 300dpi
+    THICKNESS_DEF_MAX           = -8, // used as max array size for default values
+    RADIUS_DEPEND_ON_THICKNESS  = -100 // used for radius
+};
+
+enum estyle {
+    ROUND_NONE = 0,
+    ROUND_TOP_LEFT = 1,
+    ROUND_TOP_RIGHT = 2,
+    ROUND_BOTTOM_LEFT = 4,
+    ROUND_BOTTOM_RIGHT = 8,
+    ROUND_TOP = ROUND_TOP_LEFT | ROUND_TOP_RIGHT, // 3
+    ROUND_DOWN = ROUND_BOTTOM_LEFT | ROUND_BOTTOM_RIGHT, // 12
+    ROUND_LEFT = ROUND_TOP_LEFT | ROUND_BOTTOM_LEFT, // 5
+    ROUND_RIGHT = ROUND_TOP_RIGHT | ROUND_BOTTOM_RIGHT, // 10
+    ROUND_ALL = ROUND_TOP | ROUND_DOWN, // 15
+    // fill
+    ROUND_FILL_INSIDE = 16,
+    ROUND_FILL_OUTSIDE_BG = 32,
+    // blend
+    ROUND_BLEND_SRC_INSIDE = 64, // blend with source
+    ROUND_BLEND_SRC_OUTSIDE = 128, // blend with source
+
+    ROUND_DEFAULT = ROUND_ALL
+};
+
+enum egradient {
+    GRADIENT_NONE        = 0,
+    GRADIENT_UP_DOWN     = 1, // up white, down transparent
+    GRADIENT_DOWN_UP     = 2, // down white, up transparent
+    GRADIENT_LEFT_RIGHT  = 4, // left white, right transparent
+    GRADIENT_RIGHT_LEFT  = 8, // right white, left transparent
+};
+
 
 void ClearScreen();
 void SetClip(int x, int y, int w, int h);
@@ -1651,6 +1744,68 @@ void InvertAreaMap(int x, int y, int w, int h, icolor_map *map);
 void DimArea(int x, int y, int w, int h, int color);
 void DrawSelection(int x, int y, int w, int h, int color);
 void DrawCircle(int x0, int y0, int radius, int color);
+
+/**
+ * @brief DrawCircleQuarter - draw smooth circle (background is considered white)
+ * @param x0 - x coordinate of center
+ * @param y0 - y coordinate of center
+ * @param radius - outer radius ( so if width > 0 then inner radius is radius - width + 1)
+ * @param direction - part of circle to draw
+ * @param thickness - circle line width
+ * @param color - circle color
+ * @param bg_color - background color (use with flag ROUND_FILL_OUTSIDE_BG)
+ */
+void DrawCircleQuarter(int x0, int y0, int radius, /*enum estyle*/int direction, int thickness, int color, int bg_color);
+
+/**
+ * @brief GetDefaultFrameCertifiedThickness
+ * @param thickness - negative value - certified default thickness
+ * @return certified thickness according "edef_thickness"
+ */
+int GetDefaultFrameCertifiedThickness(/*enum edef_thickness*/int thickness);
+
+/**
+ * @brief getDefaultFrameCertifiedRadius
+ * @param thickness - using line thickness for line (-1 - use certified default thickness)
+ * @return certified radius according "thickness"
+ */
+int GetDefaultFrameCertifiedRadius(int thickness);
+
+/**
+ * @brief DrawFrameCertified - draw rect (x, y, w, h) with round corners
+ * call DrawFrameCertifiedEx(x, y, w, h, thickness, SIDE_ALL, ROUND_DEFAULT, RADIUS_DEPEND_ON_THICKNESS, BLACK, WHITE);
+ */
+void DrawFrameCertified(int x, int y, int w, int h, /*enum edef_thickness*/int thickness);
+/**
+ * @brief DrawFrameRectCertified - draw rect (x, y, w, h) with round corners
+ * call DrawFrameCertified(x, y, w, h, thickness);
+ */
+void DrawFrameRectCertified(irect rect, /*enum edef_thickness*/int thickness);
+
+/**
+ * @brief DrawFrameCertified - draw rect straight lines on "sides" in rect(x, y, w, h) and with round corners in "direction"
+ * @param x, y, w, h - rect margins
+ * @param thickness - line thickness
+ * @param sides - draw straight line sides
+ * @param direction - round corners
+ * @param radius - round radius of corners (RADIUS_DEPEND_ON_THICKNESS - default value, negative value depend on THICKNESS_DEF_*)
+ * @param color - line color
+ * @param bg_color - background color (use with flag ROUND_FILL_OUTSIDE_BG)
+ */
+void DrawFrameCertifiedEx(int x, int y, int w, int h, /*enum edef_thickness*/int thickness, /*eside*/int sides, /*enum estyle*/int direction, int radius, int color, int bg_color);
+
+/**
+ * @brief DrawFrameRectCertified - draw rect straight lines on "sides" in rect(x, y, w, h) and with round corners in "direction"
+ * @param rect - rect margins
+ * @param thickness - line thickness
+ * @param sides - draw straight line sides
+ * @param direction - round corners
+ * @param radius - round radius of corners (RADIUS_DEPEND_ON_THICKNESS - default value, negative value depend on THICKNESS_DEF_*)
+ * @param color - line color
+ * @param bg_color - background color (use with flag ROUND_FILL_OUTSIDE_BG)
+ */
+void DrawFrameRectCertifiedEx(irect rect, /*enum edef_thickness*/int thickness, /*eside*/int sides, /*enum estyle*/int direction, int radius, int color, int bg_color);
+
 void DrawPickOut(int x, int y, int w, int h, const char *key);
 void DrawPickOutEx(const irect *rect, const char *key);
 void DitherArea(int x, int y, int w, int h, int levels, int method);
@@ -1684,6 +1839,17 @@ void DrawDiagonalHatchLimits(int x, int y, int w, int h, int step, int color, in
 void Transparent(int x, int y, int w, int h, int percent);
 void TransparentRect(irect rect, int percent);
 
+/**
+ * @brief TransparentGradient, TransparentGradientRect - Draw gradient transparent
+ * @param x
+ * @param y
+ * @param w
+ * @param h
+ * @param direction - gradient direction
+ */
+void TransparentGradient(int x, int y, int w, int h, /*egradient*/int direction);
+void TransparentGradientRect(irect rect, /*egradient*/int direction);
+
 // Bitmap functions
 
 ibitmap *LoadBitmap(const char *filename);
@@ -1704,6 +1870,10 @@ ibitmap* CopyBitmapDepth4To8(const ibitmap* bmp);
 ibitmap* CopyBitmapDepth8To4(const ibitmap* bmp);
 void MoveBitmap(ibitmap* bmp, int offset);
 void MoveBitmapRight(ibitmap* bm, int offset);
+// Only one side per call.
+// percent of image width or height
+// side -1 - all page
+int FindAverageBitmapColor(const ibitmap *bmp, /*enum eside*/int side, int percent);
 
 /**
  * @brief BitmapStretchCopy function copies a part of an other bitmap to the newly created bitmap
@@ -1739,6 +1909,7 @@ FontForSort* EnumFontsFromDirectoryEx(const char * directory1, const char * dire
 void FreeFontsForSort(FontForSort* fonts);
 
 ifont *OpenFont(const char *name, int size, int aa);
+ifont *OpenFontEx(const char *name, int size, int line_height, int aa);
 void CloseFont(ifont *f);
 void SetFont(const ifont *font, int color);
 const ifont *GetFont();
@@ -1787,7 +1958,7 @@ int FineUpdateSupported();
 int HQUpdateSupported();
 void ScheduleUpdate(int x, int y, int w, int h, int bw);
 void WaitForUpdateComplete();
-
+void GetWaveformTimes(unsigned short result[16]);
 // Event handling functions
 iv_handler SetEventHandler(iv_handler hproc);
 iv_handler SetEventHandlerEx(iv_handler hproc);
@@ -1921,6 +2092,8 @@ void StartPanelProgress(int progress, int timeoutMs);
  */
 void StopPanelProgress();
 
+void ShowPanelPackageProgress(int progress, int timeout);
+
 int  DrawPanel(const ibitmap *icon, const char *text, const char *title, int percent);
 int  DrawPanel2(const ibitmap *icon, const char *text, const char *title, int percent, int readingModeEnable); // almost the same as DrawPanel when have 0 in readingModeEnable parameter
 int  DrawPanel3(const ibitmap *icon, int currentPage, int totalPages, int readingModeEnable); // almost the same as DrawPanel when have 0 in readingModeEnable parameter
@@ -1967,9 +2140,11 @@ void CloseConfig(iconfig *cfg);
 void CloseConfigNoSave(iconfig *cfg);
 
 int ReadInt(iconfig *cfg, const char *name, int deflt);
+long long ReadLongLong(iconfig *cfg, const char *name, long long deflt);
 const char *ReadString(iconfig *cfg, const char *name, const char *deflt);
 const char *ReadSecret(iconfig *cfg, const char *name, const char *deflt);
 void WriteInt(iconfig *cfg, const char *name, int value);
+void WriteLongLong(iconfig *cfg, const char *name, long long value);
 void WriteString(iconfig*cfg, const char *name, const char *value);
 void WriteSecret(iconfig *cfg, const char *name, const char *value);
 void WriteIntVolatile(iconfig *cfg, const char *name, int value);
@@ -1985,6 +2160,7 @@ void UpdateConfigPage(const char *title, iconfigedit *ice);
 void CloseConfigLevel();
 void NotifyConfigChanged();
 void ClearConfig(iconfig *cfg);
+void EnumerateConfig(iconfig *cfg, int (*func)(char *name, void *value, void *userdata), void * user_data);
 /**
  * @brief GetKeyMapping used to read TEXT key mapping from default config
  * @param act0 and @param act1 are are arrays of CSTtring wich look like "@KA_..." 
@@ -2002,6 +2178,9 @@ void GetKeyMapping(const char *act0[], const char *act1[]);
  * IMPORTANT !! pointers are not always valid, use strdup to handle it
  */ 
 void GetKeyMappingEx(int what, const char *act0[], const char *act1[], int count);
+
+void GetKeyMappingExtended(keymap_t type, const char *act0[], const char *act1[], const char *act2[], int count);
+
 int AdjustDirectionKeys(int key);
 unsigned long QueryDeviceButtons();
 int IsJoystickButtonsPresent();
@@ -2011,8 +2190,10 @@ int IsJoystickButtonsPresent();
 #define TCAP(s) (0x50000000 | ((s[0] & 0x7f) | ((s[1] & 0x7f) << 7) | ((s[2] & 0x7f) << 14) | ((s[3] & 0x7f) << 21)))
 
 int MultitaskingSupported();
-int NewTask(const char *path, char * const args[], const char *appname, const char *name, const ibitmap *icon, unsigned int flags);
+int NewTask(const char *path, const char * const args[], const char *appname, const char *name, const ibitmap *icon, unsigned int flags);
 int NewTaskEx(const char *path, char * const args[], const char *appname, const char *name, const ibitmap *icon, unsigned int flags, int run_as_reader_if_needed);
+int OpenTask(const char *path, int argc, const char * const* argv, int flags);
+
 int NewSubtask(char *name);
 int SwitchSubtask(int subtask);
 void SubtaskFinished(int subtask);
@@ -2168,6 +2349,7 @@ long iv_ipc_request_with_timeout(long type, long param, unsigned char *data, int
 
 // Language functions
 
+const char* currentLang();
 char ** EnumLanguages();
 void LoadLanguage(const char *lang);
 void AddTranslation(const char *label, const char *trans);
@@ -2176,6 +2358,27 @@ const char *GetCurrentLangText(const char *s);
 const char *GetLangText(const char *s);
 const char *GetLangTextF(const char *s, ...);
 const char *GetLangTextPlural(const char *s, int amount);
+/**
+ * localized value by key should be in part of "strftime" format
+ * return localized time in variable "buf" or empty string if "key" not found
+ * return value "0" - ok
+ * return value "-1" - no key found (key may be a format)
+ * return value "-2" - not found any replacement of time format
+ * return value "-3" - result not fit in buffer
+ * return value "-100" - not supported format
+ * Notice: function try to add "_12" to key if AM/PM time format turned on in settings
+ * Requirments for keys:
+ * "@TimeFormat" + <key_words1> + <options> + <key_words2> + <am.pm>
+ * <options>:
+ * "Date"/"SDate" - month name and month day number / short month name and month day number (ex. January/Jan)
+ * "Time" - hours and minutes
+ * "WDay"/"SWDay" - Week day name / short week day name (ex. Monday/Mon)
+ * "Year" - year number
+ * others - other options like "Seconds", "Month", "SMonth", "SMDay", etc
+ * <key_words1>, <key_words2> - optional if need for detalize key
+ * <am.pm> - if AM/PM time format turned on in settings, auto add "_12" in function.
+ */
+int GetLangTime(char *buf, int size, const char *key, struct tm *t);
 void SetRTLBook(int rtl);
 int IsRTL();  // depends only on the system language
 int IsBookRTL();	// can be overwritten by application
@@ -2236,6 +2439,7 @@ void OpenTheme(const char *path);
 ibitmap *GetResource(const char *name, const ibitmap *deflt);
 int GetThemeInt(const char *name, int deflt);
 const char *GetThemeString(const char *name, const char *deflt);
+char* GetLayoutFromTheme(const char* name);
 ifont *GetThemeFont(const char *name, const char *deflt);
 void GetThemeRect(const char *name, irect *rect, int x, int y, int w, int h, int flags);
 ibitmap *GetKeyResource(const char *key, const ibitmap *deflt);
@@ -2417,6 +2621,12 @@ int IsKeyPressed(int key);
 char *GetDeviceModel();
 char *GetHardwareType();
 char *GetSoftwareVersion();
+/*
+ * Caller need sreader rights,
+ * device_model - free by caller
+ * return 0 - ok, negative - error code, positive - number of filled params
+ */
+int GetSerialSoftwareInfo(char **device_model, int *major_version, int *minor_version, int *build_version);
 int GetHardwareDepth();
 char *GetSerialNumber();
 const char *GetExternalCardSerialNumber();
@@ -2433,12 +2643,15 @@ int SafeMode();
 void OpenMainMenu();
 void CloseAllTasks();
 int WriteStartupLogo(const ibitmap *bm);
-int WriteLowPoweRLogo(const char *logo);
+int WriteLowPoweRLogo(const ibitmap *bm);
 int PageSnapshot();
 int RestoreStartupLogo();
 int QueryTouchpanel();
 void CalibrateTouchpanel();
 void CalibrateTouchDevice(enum input_dev_e TouchDevice);
+int TouchScreenEnable(bool onOff);
+bool IsTouchScreenEnabled(void);
+
 void OpenCalendar();
 int StartSoftwareUpdate();
 int HavePowerForSoftwareUpdate();
@@ -2584,8 +2797,8 @@ int utf_tolower_ext(char* src, int src_len, char** dest, int* dest_len);
 #define CHANGE_CASE_ON_STACK(buf, f) { \
     char* CHANGE_CASE_ON_STACK_dest_ = NULL; \
     int CHANGE_CASE_ON_STACK_dest_len_ = 0; \
-    f((buf), -1, &CHANGE_CASE_ON_STACK_dest_, &CHANGE_CASE_ON_STACK_dest_len_); \
-    strncpy((buf), CHANGE_CASE_ON_STACK_dest_, sizeof(buf) - 1); \
+    if (f((buf), -1, &CHANGE_CASE_ON_STACK_dest_, &CHANGE_CASE_ON_STACK_dest_len_) > 0) \
+        strncpy((buf), CHANGE_CASE_ON_STACK_dest_, sizeof(buf) - 1); \
     (buf)[sizeof(buf) - 1]  = 0; \
     free(CHANGE_CASE_ON_STACK_dest_); \
 }
@@ -2875,6 +3088,7 @@ int DebugResourceBitmaps_isEnabled();
 
 
 
+#define HIGH_PRIORITY_JOB_OPEN_STORE 0
 #define HIGH_PRIORITY_JOB_OPEN_BOOK 1
 
 int isHighPriorityJobRunning();
@@ -2897,13 +3111,6 @@ int PendingHwEventsCount();
 int configureAudioOutput();
 
 /**
- * @brief get_audio_status (this function can
- * @param status
- * @return 1 - on success
- */
-int get_audio_status(audio_output_info* status);
-
-/**
  * @brief setAvrcpMetadata - set properties to be visible through avrcp
  * @param path
  * @param length - track length in sec
@@ -2924,6 +3131,16 @@ int get_audio_status(audio_output_info* status);
 void setNeedAvrcpFocus(int need);
 int haveAvrcpFocus();
 int getAvrcpFocusPid(); // 0 - no avrcp focus
+
+typedef enum eTaskOomPriority {
+    kTaskOomPriorityLow,
+    kTaskOomPriorityNormal,
+    kTaskOomPriorityHigh, // monitor first kill this one
+} TaskOomPriority;
+
+int setTaskOomPriority(TaskOomPriority value);
+
+void getDDRMemoryInfo(int *total, int *free, int *total_swap, int *free_swap); // MB
 
 #ifdef __cplusplus
 }

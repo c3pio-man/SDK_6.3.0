@@ -83,6 +83,9 @@ public:
     void SetDisableSertValidation(bool value) { disable_sert_validation_ = value; }
     void EnableCookie(bool flag, const std::string &file = "");
     std::string GetCokieFile() const {return cookie_file_;}
+
+    static std::string HidePassword(const std::string& s);
+
 private:
     void addParam(const std::string& name, const std::string& value, bool isGetParam);
     void buildQuery(std::stringstream *stream, const TParams & params) const;
@@ -102,6 +105,7 @@ public:
     struct CurlAdditionalInfo {
         curl_slist* slist = nullptr;
         std::string postQuery;
+        HeaderRecords hr;
         ~CurlAdditionalInfo() { curl_slist_free_all(slist); }
     };
 

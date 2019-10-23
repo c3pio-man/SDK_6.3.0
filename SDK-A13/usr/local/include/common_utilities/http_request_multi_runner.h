@@ -27,12 +27,13 @@ public:
         std::vector<char> received_data_;
         HttpRequestRunner::CurlAdditionalInfo additional_info_;
         HttpRequest request_;
-        std::function<void(int, long, std::vector<char>&)> cb_; // params are: err, http code, received data
+        std::function<void(int, long, std::vector<char>&, HttpRequestRunner::HeaderRecords&)> cb_; // params are: err, http code, received data
     };
 
     static HttpRequestMultiRunner& instance();
 
     int PerformRequest(const HttpRequest &req, std::function<void(int, long, std::vector<char>&)>);
+    int PerformRequestEx(const HttpRequest &req, std::function<void(int, long, std::vector<char>&, HttpRequestRunner::HeaderRecords&)>);
 
 private:
     static int UsleepHandler(__useconds_t __useconds);
